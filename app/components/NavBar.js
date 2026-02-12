@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function NavBar() {
   return (
@@ -13,8 +14,8 @@ export default function NavBar() {
                 />
             </div>
             <div className="space-x-4">
-                {/*<Link href="" className="hover:underline">Sign In</Link>
-                <Link href="" className="hover:underline">Register</Link>
+                <a href="/login" className="hover:underline">Sign In</a>
+                {/*<Link href="/pages/register" className="hover:underline">Register</Link>
                 */}
             </div>
         </div>
