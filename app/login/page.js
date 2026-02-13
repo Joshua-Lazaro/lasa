@@ -25,8 +25,8 @@ export default function LoginPage() {
                             <input type="password" id="password" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="Enter your password"/>
                         </div>
                         <div className="flex flex-col gap-1 justify-center items-center">
-                            <button type="submit" className="w-[var(--size)] bg-white text-black px-4 py-2 rounded border-2 border-black hover:bg-[var(--color-cyan-300)] transition">Login</button>
-
+                            {/* Placeholder for login functionality, replace with actual form submission logic */}
+                            <a href="/dashboard" className="w-[var(--size)] bg-white text-black px-4 py-2 rounded border-2 border-black hover:bg-[var(--color-cyan-300)] transition text-center">Login</a>
                             <p className="mt-4 text-gray-600">Don't have an account? <a href="/register" className="text-blue-500 hover:underline">Register here</a>.</p>
                         </div>
                     </form>
