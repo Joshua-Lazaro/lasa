@@ -3,6 +3,12 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --size: 8rem;
+  --color-cyan-300: #38b6ff;
+}
+
+html{
+  scroll-behavior: smooth;
 }
 
 @theme inline {
