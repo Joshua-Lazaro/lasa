@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Epilogue&family=Unbounded&family=Fraunces&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -25,8 +26,16 @@ html{
   }
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Fraunces', serif;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Epilogue', Helvetica, sans-serif;
+}
+
+button {
+  font-family: 'Epilogue', Helvetica, sans-serif;
 }

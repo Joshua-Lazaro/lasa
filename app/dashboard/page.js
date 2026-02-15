@@ -4,7 +4,7 @@ import Link from "next/link";
 
 export default function Dashboard() {
     return (
-        <div className="min-h-screen bg-white text-gray-800">
+        <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
             <NavBar />
             {/* Dashboard Welcome Image */}
             <div className="relative p-10 rounded-lg w-full flex flex-col items-center -mt-40">
@@ -27,7 +27,7 @@ export default function Dashboard() {
                     <div
                         key={index}
                         className="flex flex-col items-center w-full sm:w-75 md:w-120">
-                        <h2 className="text-center text-black text-2xl md:text-3xl font-bold drop-shadow-lg mb-4 px-2">
+                        <h2 className="text-center text-[#003049] text-2xl md:text-3xl font-bold drop-shadow-lg mb-4 px-2">
                             {card.title}
                         </h2>
                         <a href={card.href}

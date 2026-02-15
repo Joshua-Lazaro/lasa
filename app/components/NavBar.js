@@ -4,14 +4,14 @@ import Link from "next/link";
 
 export default function NavBar() {
   return (
-     <nav className="sticky top-0 p-4 bg-white text-gray-800 flex justify-between items-center border-b-2 border-gray-400 pb-1 z-50"> 
+     <nav className="sticky top-0 p-4 bg-[#f8f9fa] text-[#1a2b3c] flex justify-between items-center border-b-2 border-[#1a2b3c] pb-1 z-50"> 
         <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
             <div className="flex items-center space-x-4">
                 <a href="/">
                     <img
                         src="/lasa-logo.png"
                         alt="Lasa Logo"
-                        className="w-20 h-20 object-contain"
+                        className="w-20 h-15 object-contain"
                     />
                 </a>
             </div>

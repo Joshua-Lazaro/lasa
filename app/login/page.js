@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 
 export default function LoginPage() {
     return (
-        <div className="min-h-screen bg-white text-gray-800">
+        <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
             <NavBar />
             <div id="LoginPage" className="p-6">
                 <div className="p-10 rounded-lg w-full flex flex-col items-center ">
@@ -17,16 +17,16 @@ export default function LoginPage() {
                     </div>
                     <form className="w-full max-w-md">
                         <div className="mb-4">
-                            <label htmlFor="email" className="block text-gray-700">Email</label>
+                            <label htmlFor="email" className="block text-[#1f263f]">Email</label>
                             <input type="email" id="email" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="Enter your email"/>
                         </div>
                         <div className="mb-4 justify-center items-center">
-                            <label htmlFor="password" className="block text-gray-700">Password</label>
+                            <label htmlFor="password" className="block text-[#1f263f]">Password</label>
                             <input type="password" id="password" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="Enter your password"/>
                         </div>
                         <div className="flex flex-col gap-1 justify-center items-center">
                             {/* Placeholder for login functionality, replace with actual form submission logic */}
-                            <a href="/dashboard" className="w-[var(--size)] bg-white text-black px-4 py-2 rounded border-2 border-black hover:bg-[var(--color-cyan-300)] transition text-center">Login</a>
+                            <a href="/dashboard" className="w-[var(--size)] bg-[#f8f9fa] text-black px-4 py-2 rounded border-2 border-black hover:bg-[var(--color-cyan-300)] transition text-center">Login</a>
                             <p className="mt-4 text-gray-600">Don't have an account? <a href="/register" className="text-blue-500 hover:underline">Register here</a>.</p>
                         </div>
                     </form>
