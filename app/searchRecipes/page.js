@@ -6,7 +6,7 @@ import SearchBar from "../components/SearchBar";
 import { useEffect, useState } from "react";
 
 export default function SearchRecipes() {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -65,7 +65,7 @@ export default function SearchRecipes() {
             {recipes.map((recipe) => (
               <div
                 key={recipe.recipe_id}
-                className="relative rounded-lg border-2 border-black h-80 w-120 flex items-center justify-center"
+                className="relative rounded-lg border-2 border-black h-80 w-120 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
                 <Image
                   className="object-contain"
