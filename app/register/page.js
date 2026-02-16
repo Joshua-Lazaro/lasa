@@ -3,7 +3,7 @@ import NavBar from "../components/NavBar";
 
 export default function Register() {
     return (
-        <div className="min-h-screen bg-white text-gray-800">
+        <div className="min-h-screen bg-[#f8f9fa] text-[#1f263f]">
             <NavBar />
             <div id="LoginPage" className="p-6">
                 <div className="p-10 rounded-lg w-full flex flex-col items-center ">
@@ -40,7 +40,7 @@ export default function Register() {
                             <input type="email" id="email" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="Enter your email"/>
                         </div>
                         <div className="flex flex-col gap-1 justify-center items-center">
-                            <button type="submit" className="w-9rem bg-white text-black px-4 py-2 rounded border-2 shadow-md border-black hover:bg-[var(--color-cyan-300)] transition">
+                            <button type="submit" className="w-9rem bg-[#f8f9fa] px-4 py-2 rounded border-2 shadow-md border-[#1f263f] hover:bg-[var(--color-cyan-300)] transition">
                                 Create Account
                             </button>
                         </div>
