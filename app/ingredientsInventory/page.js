@@ -1,12 +1,14 @@
+"use client";
 import Image from "next/image";
-import NavBar from "../components/NavBar";
+import LoggedInNavBar from "../components/LoggedInNavBar";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
-export default function Dashboard() {
-    return (
-        <div className="min-h-screen bg-white text-gray-800">
-            <NavBar />
-            <h1>Ingredients Inventory</h1>
-        </div>
-    );
+export default function IngredientsInventory() {
+  return (
+    <div className="min-h-screen bg-white text-gray-800">
+      <LoggedInNavBar />
+      <h1 className="text-2xl font-bold mb-4">Ingredients Inventory</h1>
+    </div>
+  );
 }
