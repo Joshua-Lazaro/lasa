@@ -1,5 +1,6 @@
 import Image from "next/image";
 import NavBar from "../components/NavBar";
+import SearchBar from "../components/SearchBar";
 import Link from "next/link";
 
 export default function Dashboard() {
@@ -17,8 +18,14 @@ export default function Dashboard() {
                     />
                 </div>
 
+                {/* Search Bar */}
+                <div className="relative rounded-lg w-full flex flex-col items-center -mt-40 mb-20">
+                  <SearchBar />
+                </div>
+                
+
                 {/* Dashboard Cards */}
-                <div className="flex flex-col md:flex-row flex-wrap justify-center items-start w-full p-4 -mt-40 gap-6">
+                <div className="flex flex-col md:flex-row flex-wrap justify-center items-start w-full p-4 -mt-20 gap-6">
                     {[
                         { title: "Ingredients Inventory", href: "/ingredientsInventory" },
                         { title: "Search Recipes", href: "/searchRecipes" },
@@ -31,7 +38,7 @@ export default function Dashboard() {
                             {card.title}
                         </h2>
                         <a href={card.href}
-                            className="relative w-full h-100 md:h-130 md:w-100 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center">
+                            className="relative w-full h-100 md:h-115 md:w-100 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center">
                             <div className="w-[90%] h-[90%] relative">
                                 <Image
                                     src="/img_placeholder.png"
