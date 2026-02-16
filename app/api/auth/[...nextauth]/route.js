@@ -20,10 +20,9 @@ export const authOptions = {
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
-            port: Number(process.env.DB_PORT),
+            port: Number(process.env.DB_PORT) || 3306,
           });
 
-          // Make sure the table exists!
           const [rows] = await connection.execute(
             "SELECT user_id, username, password FROM user_login WHERE username = ?",
             [username]
@@ -31,21 +30,16 @@ export const authOptions = {
 
           await connection.end();
 
-          if (rows.length === 0) return null; // user not found
+          if (rows.length === 0) return null;
           const user = rows[0];
 
-          // ✅ Use bcrypt if passwords are hashed, else plaintext
-          let isValid = false;
-
-          // If passwords are plaintext in DB:
-          if (user.password === password) isValid = true;
-
-          // If passwords are hashed:
-          // isValid = await bcrypt.compare(password, user.password);
+          
+          const isValid = user.password === password; 
+          
 
           if (!isValid) return null;
 
-          return { id: user.user_id, name: user.username };
+          return { id: user.user_id, name: user.username }; 
         } catch (err) {
           console.error("DB login error:", err);
           return null;
@@ -54,6 +48,18 @@ export const authOptions = {
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async session({ session, token }) {
+      
+      session.user.id = token.id;
+      return session;
+    },
+    async jwt({ token, user }) {
+      
+      if (user) token.id = user.id;
+      return token;
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

@@ -7,10 +7,10 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState(""); // username
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false); // ✅ new state
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e) => {
@@ -18,8 +18,8 @@ export default function LoginPage() {
 
     const res = await signIn("credentials", {
       redirect: false,
-      username: email,
-      password: password,
+      username,
+      password,
     });
 
     if (res?.error) {
@@ -27,11 +27,8 @@ export default function LoginPage() {
       setSuccess(false);
     } else {
       setError("");
-      setSuccess(true); // ✅ show success
-      // Optional: redirect after a short delay
-      setTimeout(() => {
-        router.push("/searchRecipes");
-      }, 1000);
+      setSuccess(true);
+      setTimeout(() => router.push("/dashboard"), 1000);
     }
   };
 
@@ -58,8 +55,8 @@ export default function LoginPage() {
                 id="username"
                 className="w-full p-2 border border-gray-300 rounded mt-1"
                 placeholder="Enter your username"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
               />
             </div>
@@ -79,9 +76,7 @@ export default function LoginPage() {
             </div>
             {error && <p className="text-red-500 mb-2">{error}</p>}
             {success && (
-              <p className="text-green-500 mb-2">
-                ✅ Logged in successfully!
-              </p>
+              <p className="text-green-500 mb-2">✅ Logged in successfully!</p>
             )}
             <div className="flex flex-col gap-1 justify-center items-center">
               <button
