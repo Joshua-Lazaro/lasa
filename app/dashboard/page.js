@@ -1,12 +1,12 @@
 import Image from "next/image";
-import NavBar from "../components/NavBar";
+import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import Link from "next/link";
 
 export default function Dashboard() {
     return (
         <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
-            <NavBar />
+            <LoggedInNavBar />
             {/* Dashboard Welcome Image */}
             <div className="relative p-10 rounded-lg w-full flex flex-col items-center -mt-40">
                 <div className="relative rounded-lg w-full h-120">

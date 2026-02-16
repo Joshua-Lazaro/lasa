@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import NavBar from "../components/NavBar";
+import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import { useEffect, useState } from "react";
 
@@ -49,8 +49,8 @@ export default function SearchRecipes() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
-      <NavBar />
+    <div className="min-h-screen bg-[#f8f9fa] text-gray-800  max-w-auto mx-auto">
+      <LoggedInNavBar/>
       <div className="relative p-10 rounded-lg w-full flex flex-col items-center mt-10">
         <SearchBar onSearch={handleSearch} />
 
@@ -65,7 +65,7 @@ export default function SearchRecipes() {
             {recipes.map((recipe) => (
               <div
                 key={recipe.recipe_id}
-                className="relative rounded-lg border-2 border-black h-80 w-120 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
+                className="relative rounded-lg border-2 border-black h-50 w-70 lg:h-80 lg:w-120 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
                 <Image
                   className="object-contain"
