@@ -36,7 +36,6 @@ export async function POST(request) {
   if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const { ingredient_id, ingredient_name, quantity, increment } = await request.json();
-
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -78,7 +77,7 @@ export async function POST(request) {
   }
 }
 
-// DELETE: Remove a single ingredient
+// DELETE: Remove ingredient or clear all
 export async function DELETE(request) {
   const session = await getServerSession(authOptions);
   if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -95,11 +94,7 @@ export async function DELETE(request) {
 
   try {
     if (clearAll) {
-      // Clear all ingredients for current user
-      await connection.execute(
-        "DELETE FROM user_inventory WHERE user_id = ?",
-        [session.user.id]
-      );
+      await connection.execute("DELETE FROM user_inventory WHERE user_id = ?", [session.user.id]);
     } else {
       if (!ingredient_id) return Response.json({ error: "Missing ingredient_id" }, { status: 400 });
       await connection.execute(

@@ -12,7 +12,7 @@ export default function SearchBar({ onSearch }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-85 lg:w-full max-w-md mx-auto flex items-center border-2 border-gray-300 rounded-lg overflow-hidden -ml-5 lg:ml-166">
+    <form onSubmit={handleSubmit} className="w-85 lg:w-full max-w-md mx-auto flex items-center border-2 border-gray-300 rounded-lg overflow-hidden">
         <input
             type="text"
             placeholder="Search recipes..."

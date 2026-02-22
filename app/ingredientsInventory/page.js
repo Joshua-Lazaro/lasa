@@ -3,11 +3,35 @@
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import { useState, useEffect } from "react";
 
-// Helper: convert decimal → fraction or whole number
+// Helper: parse user input like "1/2", "2 1/2", or "3" into decimal
+function parseQuantity(input) {
+  input = input.trim();
+  if (!input) return NaN;
+
+  // Matches "whole fraction" like "2 1/2"
+  const mixedMatch = input.match(/^(\d+)\s+(\d+)\/(\d+)$/);
+  if (mixedMatch) {
+    const [, whole, num, denom] = mixedMatch;
+    return parseInt(whole) + parseInt(num) / parseInt(denom);
+  }
+
+  // Matches simple fraction like "3/4"
+  const fracMatch = input.match(/^(\d+)\/(\d+)$/);
+  if (fracMatch) {
+    const [, num, denom] = fracMatch;
+    return parseInt(num) / parseInt(denom);
+  }
+
+  // Otherwise try parse as decimal/whole number
+  const val = parseFloat(input);
+  return isNaN(val) ? NaN : val;
+}
+
+// Convert decimal → fraction/whole number for display
 function formatQuantity(qty) {
   if (qty === null || qty === undefined) return "";
-  const roundedQty = Math.round(qty * 1000) / 1000;
-  if (Number.isInteger(roundedQty)) return roundedQty.toString();
+  const roundedQty = Math.round(qty * 16) / 16;
+  if (Number.isInteger(roundedQty)) return { text: roundedQty.toString(), isFraction: false };
 
   const commonDenominators = [2, 3, 4, 8, 16];
   const whole = Math.floor(roundedQty);
@@ -27,11 +51,11 @@ function formatQuantity(qty) {
     }
   }
 
-  if (bestNumerator === 0) return whole.toString();
-  if (bestNumerator === bestDenominator) return (whole + 1).toString();
-  return whole === 0
-    ? `${bestNumerator}/${bestDenominator}`
-    : `${whole} ${bestNumerator}/${bestDenominator}`;
+  if (bestNumerator === 0) return { text: whole.toString(), isFraction: false };
+  if (bestNumerator === bestDenominator) return { text: (whole + 1).toString(), isFraction: false };
+
+  const fractionText = whole === 0 ? `${bestNumerator}/${bestDenominator}` : `${whole} ${bestNumerator}/${bestDenominator}`;
+  return { text: fractionText, isFraction: true };
 }
 
 export default function Dashboard() {
@@ -51,8 +75,7 @@ export default function Dashboard() {
       if (!res.ok) throw new Error("Failed to fetch inventory");
       const data = await res.json();
       setInventory(data);
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Could not load inventory.");
     }
   };
@@ -60,11 +83,10 @@ export default function Dashboard() {
   const handleSearch = async (e) => {
     const value = e.target.value;
     setSearch(value);
-
     if (value.length > 1) {
       try {
         const res = await fetch(`/api/ingredients?q=${value}`);
-        if (!res.ok) throw new Error("Search failed");
+        if (!res.ok) throw new Error();
         const data = await res.json();
         setIngredientResults(data);
       } catch {
@@ -78,10 +100,10 @@ export default function Dashboard() {
     if (!selectedIngredient) return setError("Select an ingredient");
     if (!quantity) return setError("Enter quantity");
 
-    const qtyNumber = parseFloat(quantity);
+    const qtyNumber = parseQuantity(quantity);
     if (isNaN(qtyNumber) || qtyNumber <= 0) return setError("Quantity must be positive");
 
-    const existing = inventory.find(item => item.ingredient_id === selectedIngredient.ingredient_id);
+    const existing = inventory.find(i => i.ingredient_id === selectedIngredient.ingredient_id);
     const newQuantity = existing ? existing.ingredient_quantity + qtyNumber : qtyNumber;
 
     try {
@@ -95,7 +117,7 @@ export default function Dashboard() {
           increment: unit
         })
       });
-      if (!res.ok) throw new Error("Failed to add/update");
+      if (!res.ok) throw new Error();
 
       setInventory(prev => {
         if (existing) {
@@ -171,7 +193,7 @@ export default function Dashboard() {
             Add Ingredient
           </button>
           <button onClick={handleClearAll}
-            className="bg-red-600 text-white px-5 py-2 rounded-xl hover:bg-red-800 transition-colors">
+            className="bg-blue-400 text-white px-5 py-2 rounded-xl hover:bg-blue-800 transition-colors">
             Clear All
           </button>
         </div>
@@ -186,28 +208,29 @@ export default function Dashboard() {
             {inventory.length === 0
               ? <p className="text-gray-500">No ingredients added yet.</p>
               : <ul className="grid auto-flow-row grid-cols-[repeat(auto-fill,minmax(200px,1fr))] overflow-auto auto-rows-max gap-x-8 gap-y-2 w-full h-full">
-                  {inventory.map(item => (
-                    <li key={item.ingredient_id} className="bg-gray-100 p-2 rounded-lg text-center relative">
-                      <span className="font-semibold">{item.ingredient_name}</span><br />
-                      {formatQuantity(item.ingredient_quantity)} {item.ingredient_measure}
-
-                      {/* DELETE */}
-                      <button onClick={async () => {
-                        try {
-                          const res = await fetch("/api/inventory", {
-                            method: "DELETE",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ ingredient_id: item.ingredient_id })
-                          });
-                          if (!res.ok) throw new Error();
-                          setInventory(prev => prev.filter(i => i.ingredient_id !== item.ingredient_id));
-                        } catch {
-                          setError("Failed to delete ingredient.");
-                        }
-                      }}
+                  {inventory.map(item => {
+                    const { text, isFraction } = formatQuantity(item.ingredient_quantity);
+                    return (
+                      <li key={item.ingredient_id} className={`bg-gray-100 p-2 rounded-lg text-center relative ${isFraction ? 'bg-yellow-100' : ''}`}>
+                        <span className="font-semibold">{item.ingredient_name}</span><br />
+                        {text} {item.ingredient_measure}
+                        <button onClick={async () => {
+                          try {
+                            const res = await fetch("/api/inventory", {
+                              method: "DELETE",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify({ ingredient_id: item.ingredient_id })
+                            });
+                            if (!res.ok) throw new Error();
+                            setInventory(prev => prev.filter(i => i.ingredient_id !== item.ingredient_id));
+                          } catch {
+                            setError("Failed to delete ingredient.");
+                          }
+                        }}
                         className="absolute top-1 right-1 text-red-600 font-bold hover:text-red-800">×</button>
-                    </li>
-                  ))}
+                      </li>
+                    );
+                  })}
                 </ul>
             }
           </div>
