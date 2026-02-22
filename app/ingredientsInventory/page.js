@@ -3,58 +3,55 @@
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import { useState, useEffect } from "react";
 
-// Helper: parse user input like "1/2", "2 1/2", or "3" into decimal
+// Parse user input like "1/2", "2 1/2", "3" into decimal
 function parseQuantity(input) {
   input = input.trim();
   if (!input) return NaN;
 
-  // Matches "whole fraction" like "2 1/2"
   const mixedMatch = input.match(/^(\d+)\s+(\d+)\/(\d+)$/);
   if (mixedMatch) {
     const [, whole, num, denom] = mixedMatch;
     return parseInt(whole) + parseInt(num) / parseInt(denom);
   }
 
-  // Matches simple fraction like "3/4"
   const fracMatch = input.match(/^(\d+)\/(\d+)$/);
   if (fracMatch) {
     const [, num, denom] = fracMatch;
     return parseInt(num) / parseInt(denom);
   }
 
-  // Otherwise try parse as decimal/whole number
   const val = parseFloat(input);
   return isNaN(val) ? NaN : val;
 }
 
-// Convert decimal → fraction/whole number for display
+// Format decimal → simple fraction/whole number for display
 function formatQuantity(qty) {
-  if (qty === null || qty === undefined) return "";
-  const roundedQty = Math.round(qty * 16) / 16;
-  if (Number.isInteger(roundedQty)) return { text: roundedQty.toString(), isFraction: false };
+  if (qty === null || qty === undefined) return { text: "", isFraction: false };
 
-  const commonDenominators = [2, 3, 4, 8, 16];
-  const whole = Math.floor(roundedQty);
-  const fractionDecimal = roundedQty - whole;
+  const whole = Math.floor(qty);
+  const fractionDecimal = qty - whole;
 
-  let bestNumerator = 0;
-  let bestDenominator = 1;
+  if (fractionDecimal === 0) return { text: whole.toString(), isFraction: false };
+
+  const denominators = [2, 3, 4, 8];
+  let bestNumer = 0;
+  let bestDenom = 1;
   let minDiff = Infinity;
 
-  for (let denom of commonDenominators) {
-    const numer = Math.round(fractionDecimal * denom);
-    const diff = Math.abs(fractionDecimal - numer / denom);
+  for (let d of denominators) {
+    const n = Math.round(fractionDecimal * d);
+    const diff = Math.abs(fractionDecimal - n / d);
     if (diff < minDiff) {
       minDiff = diff;
-      bestNumerator = numer;
-      bestDenominator = denom;
+      bestNumer = n;
+      bestDenom = d;
     }
   }
 
-  if (bestNumerator === 0) return { text: whole.toString(), isFraction: false };
-  if (bestNumerator === bestDenominator) return { text: (whole + 1).toString(), isFraction: false };
+  if (bestNumer === 0) return { text: whole.toString(), isFraction: false };
+  if (bestNumer === bestDenom) return { text: (whole + 1).toString(), isFraction: false };
 
-  const fractionText = whole === 0 ? `${bestNumerator}/${bestDenominator}` : `${whole} ${bestNumerator}/${bestDenominator}`;
+  const fractionText = whole === 0 ? `${bestNumer}/${bestDenom}` : `${whole} ${bestNumer}/${bestDenom}`;
   return { text: fractionText, isFraction: true };
 }
 
@@ -72,9 +69,12 @@ export default function Dashboard() {
   const fetchInventory = async () => {
     try {
       const res = await fetch("/api/inventory");
-      if (!res.ok) throw new Error("Failed to fetch inventory");
+      if (!res.ok) throw new Error();
       const data = await res.json();
-      setInventory(data);
+      setInventory(data.map(item => ({
+        ...item,
+        ingredient_quantity: parseFloat(item.ingredient_quantity)
+      })));
     } catch {
       setError("Could not load inventory.");
     }
@@ -100,11 +100,12 @@ export default function Dashboard() {
     if (!selectedIngredient) return setError("Select an ingredient");
     if (!quantity) return setError("Enter quantity");
 
-    const qtyNumber = parseQuantity(quantity);
-    if (isNaN(qtyNumber) || qtyNumber <= 0) return setError("Quantity must be positive");
+    const inputQty = parseQuantity(quantity);
+    if (isNaN(inputQty) || inputQty <= 0) return setError("Quantity must be positive");
 
     const existing = inventory.find(i => i.ingredient_id === selectedIngredient.ingredient_id);
-    const newQuantity = existing ? existing.ingredient_quantity + qtyNumber : qtyNumber;
+    const currentQty = existing ? parseFloat(existing.ingredient_quantity) : 0;
+    const updatedQuantity = currentQty + inputQty;
 
     try {
       const res = await fetch("/api/inventory", {
@@ -113,8 +114,8 @@ export default function Dashboard() {
         body: JSON.stringify({
           ingredient_id: selectedIngredient.ingredient_id,
           ingredient_name: selectedIngredient.ingredient_name,
-          quantity: newQuantity,
-          increment: unit
+          quantity: inputQty,
+          measure: unit
         })
       });
       if (!res.ok) throw new Error();
@@ -122,11 +123,16 @@ export default function Dashboard() {
       setInventory(prev => {
         if (existing) {
           return prev.map(i => i.ingredient_id === existing.ingredient_id
-            ? { ...i, ingredient_quantity: newQuantity, ingredient_measure: unit }
+            ? { ...i, ingredient_quantity: updatedQuantity, ingredient_measure: unit }
             : i
           );
         }
-        return [...prev, { ingredient_id: selectedIngredient.ingredient_id, ingredient_name: selectedIngredient.ingredient_name, ingredient_quantity: qtyNumber, ingredient_measure: unit }];
+        return [...prev, {
+          ingredient_id: selectedIngredient.ingredient_id,
+          ingredient_name: selectedIngredient.ingredient_name,
+          ingredient_quantity: inputQty,
+          ingredient_measure: unit
+        }];
       });
 
       setSearch(""); setQuantity(""); setSelectedIngredient(null); setIngredientResults([]);
@@ -211,7 +217,7 @@ export default function Dashboard() {
                   {inventory.map(item => {
                     const { text, isFraction } = formatQuantity(item.ingredient_quantity);
                     return (
-                      <li key={item.ingredient_id} className={`bg-gray-100 p-2 rounded-lg text-center relative ${isFraction ? 'bg-yellow-100' : ''}`}>
+                      <li key={item.ingredient_id} className={`p-2 rounded-lg text-center relative ${isFraction ? 'bg-yellow-100' : 'bg-gray-100'}`}>
                         <span className="font-semibold">{item.ingredient_name}</span><br />
                         {text} {item.ingredient_measure}
                         <button onClick={async () => {
