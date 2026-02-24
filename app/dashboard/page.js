@@ -38,7 +38,7 @@ export default function Dashboard() {
                             {card.title}
                         </h2>
                         <a href={card.href}
-                            className="relative w-full h-100 md:h-115 md:w-100 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center">
+                            className="relative w-full h-80 md:h-95 md:w-100 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center">
                             <div className="w-[90%] h-[90%] relative">
                                 <Image
                                     src="/img_placeholder.png"
