@@ -3,7 +3,7 @@
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import { useState, useEffect } from "react";
 
-// Parse user input like "1/2", "2 1/2", "3" into decimal
+// Parsing fractions to decimal
 function parseQuantity(input) {
   input = input.trim();
   if (!input) return NaN;
@@ -24,7 +24,7 @@ function parseQuantity(input) {
   return isNaN(val) ? NaN : val;
 }
 
-// Format decimal → simple fraction/whole number for display
+// Format decimal quantities back to mixed fractions for display
 function formatQuantity(qty) {
   if (qty === null || qty === undefined) return { text: "", isFraction: false };
 
