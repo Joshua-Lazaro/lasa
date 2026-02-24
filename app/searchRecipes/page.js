@@ -4,11 +4,13 @@ import Image from "next/image";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SearchRecipes() {
-  const [recipes, setRecipes] = useState([]); 
+  const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   async function fetchRecipes(searchQuery = "") {
     setLoading(true);
@@ -21,7 +23,7 @@ export default function SearchRecipes() {
 
       const res = await fetch(url, {
         method: "GET",
-        credentials: "include", // send cookies for session
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -49,8 +51,9 @@ export default function SearchRecipes() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800  max-w-auto mx-auto">
-      <LoggedInNavBar/>
+    <div className="min-h-screen bg-[#f8f9fa] text-gray-800 max-w-auto mx-auto">
+      <LoggedInNavBar />
+
       <div className="relative p-10 rounded-lg w-full flex flex-col items-center mt-10">
         <SearchBar onSearch={handleSearch} />
 
@@ -65,6 +68,9 @@ export default function SearchRecipes() {
             {recipes.map((recipe) => (
               <div
                 key={recipe.recipe_id}
+                onClick={() =>
+                  router.push(`/recipePage/${recipe.recipe_id}`)
+                }
                 className="relative rounded-lg border-2 border-black h-50 w-70 lg:h-80 lg:w-120 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
                 <Image
