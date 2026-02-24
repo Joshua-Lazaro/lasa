@@ -4,11 +4,13 @@ import Image from "next/image";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function SearchRecipes() {
-  const [recipes, setRecipes] = useState([]); 
+  const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const router = useRouter();
 
   async function fetchRecipes(searchQuery = "") {
     setLoading(true);
@@ -21,7 +23,7 @@ export default function SearchRecipes() {
 
       const res = await fetch(url, {
         method: "GET",
-        credentials: "include", // send cookies for session
+        credentials: "include",
       });
 
       if (!res.ok) {
@@ -48,10 +50,14 @@ export default function SearchRecipes() {
     fetchRecipes(searchTerm);
   };
 
+  // generate cache-busting src
+  const getImageSrc = (id) => `/recipeImages/${id}.jpg?ts=${Date.now()}`;
+
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800  max-w-auto mx-auto">
-      <LoggedInNavBar/>
-      <div className="relative p-10 rounded-lg w-full flex flex-col items-center mt-10">
+    <div className="min-h-screen bg-[#f8f9fa] text-gray-800 max-w-auto mx-auto">
+      <LoggedInNavBar />
+
+      <div className="relative p-10 w-full flex flex-col items-center mt-10">
         <SearchBar onSearch={handleSearch} />
 
         {loading ? (
@@ -65,15 +71,19 @@ export default function SearchRecipes() {
             {recipes.map((recipe) => (
               <div
                 key={recipe.recipe_id}
-                className="relative rounded-lg border-2 border-black h-50 w-70 lg:h-80 lg:w-120 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
+                onClick={() => router.push(`/recipePage/${recipe.recipe_id}`)}
+                className="relative rounded-lg border-2 border-black h-64 w-64 lg:h-80 lg:w-96 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
+                {/* Load local image with cache-busting and unoptimized */}
                 <Image
-                  className="object-contain"
-                  src="/img_placeholder.png"
+                  src={getImageSrc(recipe.recipe_id)}
                   alt={recipe.recipe_name}
                   fill
+                  className="object-cover rounded-lg"
+                  unoptimized
                 />
-                <h1 className="absolute bottom-0 left-0 right-0 text-center text-black bg-opacity-75 py-2">
+
+                <h1 className="absolute bottom-0 left-0 right-0 text-center text-black bg-[#f8f9fa] py-2 rounded-b-lg">
                   {recipe.recipe_name}
                 </h1>
               </div>
