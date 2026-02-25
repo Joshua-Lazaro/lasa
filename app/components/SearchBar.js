@@ -2,12 +2,16 @@
 
 import { useState } from "react";
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, onAiSuggest }) {
   const [input, setInput] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); 
-    onSearch(input);
+    e.preventDefault();
+    if (onSearch) onSearch(input);
+  };
+
+  const handleAiClick = () => {
+    if (onAiSuggest) onAiSuggest(input);
   };
 
   return (
@@ -23,14 +27,15 @@ export default function SearchBar({ onSearch }) {
         className="grow p-2 outline-none"
       />
 
-      {/* Image Button */}
+      {/*AI Image Button */}
       <button
         type="button"
-        className="w-16 h-10 flex justify-center items-center ml-2 bg-gray-0 rounded-lg hover:scale-110 transition-transform duration-200 cursor-pointer"
+        onClick={handleAiClick}
+        className="w-16 h-10 flex justify-center items-center ml-2 hover:scale-110 transition-transform duration-200 cursor-pointer"
       >
         <img
           src="/aiSmartSuggest.png"
-          alt="Filter"
+          alt="AI Suggest"
           className="w-12 h-10 object-contain"
         />
       </button>

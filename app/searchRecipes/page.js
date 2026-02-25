@@ -4,14 +4,16 @@ import Image from "next/image";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function SearchRecipes() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
 
+  // Fetch normal recipes from DB
   async function fetchRecipes(searchQuery = "") {
     setLoading(true);
     setError("");
@@ -34,7 +36,6 @@ export default function SearchRecipes() {
       const data = await res.json();
       setRecipes(data);
     } catch (err) {
-      console.error(err);
       setError(err.message);
       setRecipes([]);
     } finally {
@@ -42,50 +43,118 @@ export default function SearchRecipes() {
     }
   }
 
+  // Fetch AI suggestions based on inventory
+  async function handleAiSuggest() {
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/ai/suggest", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "AI suggestion failed");
+      }
+
+      const aiRecipes = await res.json();
+
+      const formattedRecipes = aiRecipes.map((r) => ({
+        recipe_id: r.recipe_id || "ai-generated-" + r.recipe_name,
+        recipe_name: r.recipe_name,
+        recipe_ingredient_list: r.recipe_ingredient_list,
+        recipe_steps: r.recipe_steps,
+        matchedIngredients: r.matchedIngredients || [],
+        aiGenerated: true,
+      }));
+
+      setRecipes(formattedRecipes);
+    } catch (err) {
+      setError(err.message);
+      setRecipes([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Trigger search or AI suggestion based on URL params
   useEffect(() => {
-    fetchRecipes();
-  }, []);
+    const query = searchParams.get("q");
+    const ai = searchParams.get("aiSuggest");
+
+    if (ai) {
+      handleAiSuggest();
+    } else if (query) {
+      fetchRecipes(query);
+    } else {
+      fetchRecipes();
+    }
+  }, [searchParams]);
 
   const handleSearch = (searchTerm) => {
     fetchRecipes(searchTerm);
+    router.replace(`/searchRecipes?q=${encodeURIComponent(searchTerm)}`);
   };
 
-  // generate cache-busting src
+  const handleAiClick = () => {
+    handleAiSuggest();
+    router.replace("/searchRecipes?aiSuggest=true");
+  };
+
   const getImageSrc = (id) => `/recipeImages/${id}.jpg?ts=${Date.now()}`;
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800 max-w-auto mx-auto">
+    <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
       <LoggedInNavBar />
 
       <div className="relative p-10 w-full flex flex-col items-center mt-10">
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} onAiSuggest={handleAiClick} />
 
         {loading ? (
-          <p className="mt-10 text-black">Loading recipes...</p>
+          <p className="mt-10">Loading...</p>
         ) : error ? (
           <p className="mt-10 text-red-500">{error}</p>
         ) : recipes.length === 0 ? (
-          <p className="mt-10 text-black">No recipes found.</p>
+          <p className="mt-10">No recipes found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-10 mb-20">
             {recipes.map((recipe) => (
               <div
                 key={recipe.recipe_id}
-                onClick={() => router.push(`/recipePage/${recipe.recipe_id}`)}
-                className="relative rounded-lg border-2 border-black h-64 w-64 lg:h-80 lg:w-96 flex items-center justify-center hover:scale-105 transition-transform duration-200 cursor-pointer"
+                onClick={() => {
+                  if (recipe.aiGenerated) {
+                    localStorage.setItem(
+                      "aiRecipe",
+                      JSON.stringify(recipe)
+                    );
+                    router.push("/recipePage/ai");
+                  } else {
+                    router.push(`/recipePage/${recipe.recipe_id}`);
+                  }
+                }}
+                className="relative rounded-lg border-2 border-black h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
-                {/* Load local image with cache-busting and unoptimized */}
                 <Image
-                  src={getImageSrc(recipe.recipe_id)}
+                  src={recipe.aiGenerated ? getImageSrc(recipe.recipe_id) : getImageSrc(recipe.recipe_id)}
                   alt={recipe.recipe_name}
                   fill
                   className="object-cover rounded-lg"
                   unoptimized
                 />
 
+                {/* Recipe name */}
                 <h1 className="absolute bottom-0 left-0 right-0 text-center text-black bg-[#f8f9fa] py-2 rounded-b-lg">
                   {recipe.recipe_name}
                 </h1>
+
+                {/* Highlight matched ingredients */}
+                {recipe.matchedIngredients?.length > 0 && (
+                  <div className="absolute top-2 left-2 bg-yellow-200 text-xs px-2 py-1 rounded max-w-[90%] overflow-hidden text-ellipsis whitespace-nowrap z-10">
+                    {recipe.matchedIngredients.join(", ")}
+                  </div>
+                )}
               </div>
             ))}
           </div>
