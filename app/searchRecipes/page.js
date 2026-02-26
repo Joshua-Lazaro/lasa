@@ -112,6 +112,7 @@ export default function SearchRecipes() {
       <div className="relative p-10 w-full flex flex-col items-center mt-10">
         <SearchBar onSearch={handleSearch} onAiSuggest={handleAiClick} />
 
+        {/** TO DO: IMPLEMENT PROPER LOADING SCREEN */}
         {loading ? (
           <p className="mt-10">Loading...</p>
         ) : error ? (
@@ -134,7 +135,7 @@ export default function SearchRecipes() {
                     router.push(`/recipePage/${recipe.recipe_id}`);
                   }
                 }}
-                className="relative rounded-lg border-2 border-black h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-105 transition-transform duration-200 cursor-pointer"
+                className="relative rounded-lg border-2 border-[#1f263f] h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-105 transition-transform duration-200 cursor-pointer"
               >
                 <Image
                   src={recipe.aiGenerated ? getImageSrc(recipe.recipe_id) : getImageSrc(recipe.recipe_id)}

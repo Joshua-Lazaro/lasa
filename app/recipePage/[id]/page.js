@@ -66,13 +66,13 @@ export default function RecipePage() {
         .filter((item) => item !== "");
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
+    <div className="min-h-screen bg-[#f8f9fa] text-[#003049]">
       <LoggedInNavBar />
 
       <div className="p-10 max-w-4xl mx-auto flex flex-col items-center">
         <button
           onClick={() => router.back()}
-          className="self-start mb-4 px-4 py-2 bg-blue-400 hover:bg-blue-500 rounded-lg"
+          className="self-start mb-4 px-4 py-2 bg-[var(--color-cyan-300)] hover:bg-blue-500 rounded-lg"
         >
           ← Back
         </button>
