@@ -36,6 +36,12 @@ export default function Register() {
                             <input type="text" id="day" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="DD"/>
                             <input type="text" id="year" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="YYYY"/>
                         </div>
+                        <select className="w-full p-2 border border-gray-300 rounded mt-1 mb-4" defaultValue="" required>
+                                <option value="" disabled>Type</option>
+                                <option value="beginner">Beginner</option>
+                                <option value="home_cook">Home Cook</option>
+                                <option value="enthusiast">Enthusiast</option>
+                        </select>
                         <div className="mb-4 flex flex-row gap-4">
                             <input type="email" id="email" className="w-full p-2 border border-gray-300 rounded mt-1" placeholder="Enter your email"/>
                         </div>
