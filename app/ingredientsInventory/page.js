@@ -103,10 +103,6 @@ export default function Dashboard() {
     const inputQty = parseQuantity(quantity);
     if (isNaN(inputQty) || inputQty <= 0) return setError("Quantity must be positive");
 
-    const existing = inventory.find(i => i.ingredient_id === selectedIngredient.ingredient_id);
-    const currentQty = existing ? parseFloat(existing.ingredient_quantity) : 0;
-    const updatedQuantity = currentQty + inputQty;
-
     try {
       const res = await fetch("/api/inventory", {
         method: "POST",
@@ -120,20 +116,7 @@ export default function Dashboard() {
       });
       if (!res.ok) throw new Error();
 
-      setInventory(prev => {
-        if (existing) {
-          return prev.map(i => i.ingredient_id === existing.ingredient_id
-            ? { ...i, ingredient_quantity: updatedQuantity, ingredient_measure: unit }
-            : i
-          );
-        }
-        return [...prev, {
-          ingredient_id: selectedIngredient.ingredient_id,
-          ingredient_name: selectedIngredient.ingredient_name,
-          ingredient_quantity: inputQty,
-          ingredient_measure: unit
-        }];
-      });
+      await fetchInventory();
 
       setSearch(""); setQuantity(""); setSelectedIngredient(null); setIngredientResults([]);
     } catch {
@@ -150,7 +133,7 @@ export default function Dashboard() {
         body: JSON.stringify({ clearAll: true })
       });
       if (!res.ok) throw new Error();
-      setInventory([]);
+      await fetchInventory();
     } catch {
       setError("Failed to clear inventory.");
     }
@@ -228,7 +211,7 @@ export default function Dashboard() {
                               body: JSON.stringify({ ingredient_id: item.ingredient_id })
                             });
                             if (!res.ok) throw new Error();
-                            setInventory(prev => prev.filter(i => i.ingredient_id !== item.ingredient_id));
+                            await fetchInventory();
                           } catch {
                             setError("Failed to delete ingredient.");
                           }
