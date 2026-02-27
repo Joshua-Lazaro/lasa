@@ -43,22 +43,23 @@ export default function Dashboard() {
         </div>
 
         {/* Dashboard Cards */}
-        <div className="flex flex-col md:flex-row flex-wrap justify-center items-start w-full p-4 -mt-20 gap-6">
+        <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 justify-items-center items-start p-4 -mt-20 gap-6">
           {[
-            { title: "Ingredients Inventory", href: "/ingredientsInventory" },
+            { title: "Inventory", href: "/ingredientsInventory" },
             { title: "Search Recipes", href: "/searchRecipes" },
-            { title: "Create Your Own Recipes", href: "/ownRecipes" },
+            { title: "Create Recipes", href: "/ownRecipes" },
+            { title: "My Recipes", href: "/searchOwnRecipes" },
           ].map((card, index) => (
             <div
               key={index}
-              className="flex flex-col items-center w-full sm:w-75 md:w-120"
+              className="flex flex-col items-center w-full max-w-xs"
             >
               <h2 className="text-center text-[#003049] text-2xl md:text-3xl font-bold drop-shadow-lg mb-4 px-2">
                 {card.title}
               </h2>
               <a
                 href={card.href}
-                className="relative w-full h-80 md:h-115 md:w-100 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                className="relative w-full h-96 md:h-120 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
               >
                 <div className="w-[90%] h-[90%] relative">
                   <Image
