@@ -17,6 +17,8 @@ export default function LoggedInNavBar() {
             </div>
             <div className="space-x-3 text-xs ml-10 lg:text-base md:text-base">
                 <Link href="/searchRecipes" className="hover:underline">Recipes</Link>
+                <Link href="/ownRecipes" className="hover:underline">Create Recipe</Link>
+                <Link href="/searchOwnRecipes" className="hover:underline">My Recipes</Link>
                 <Link href="/dashboard" className="hover:underline">Dashboard</Link>
                 <Link href="/ingredientsInventory" className="hover:underline">Inventory</Link>
                 <Link href="/login" className="hover:underline">Logout</Link>

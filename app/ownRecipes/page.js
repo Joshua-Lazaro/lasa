@@ -1,14 +1,16 @@
 'use client';
 import Image from "next/image";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import LoggedInNavBar from "../components/LoggedInNavBar";
-import Link from "next/link";
 
 export default function OwnRecipeManager() {
 
+    const router = useRouter();
+
+    const [recipeName, setRecipeName] = useState("");
     const [recipeSteps, setRecipeSteps] = useState([""]);
     const [ingredientNumber, setNumIngredients] = useState(1);
-    const [unit, setUnit] = useState('pcs');
     const [ingredients, setIngredients] = useState(Array(1).fill(""));
     const [quantities, setQuantities] = useState(Array(1).fill(""));
     const [units, setUnits] = useState(Array(1).fill("pcs"));
@@ -62,6 +64,48 @@ export default function OwnRecipeManager() {
         }
     }
 
+    /* =========================
+       CREATE RECIPE FUNCTION
+    ========================= */
+    const handleCreateRecipe = async () => {
+
+        if (!recipeName.trim()) {
+            alert("Recipe name is required");
+            return;
+        }
+
+        const formattedIngredients = ingredients.map((ingredient, index) => ({
+            name: ingredient,
+            quantity: quantities[index],
+            unit: units[index]
+        }));
+
+        try {
+            const response = await fetch("/api/personalRecipes", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: recipeName,
+                    ingredients: formattedIngredients,
+                    steps: recipeSteps
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                alert(data.error || "Failed to create recipe");
+                return;
+            }
+
+            router.push(`/searchOwnRecipes?created=${data.personal_recipe_id}`);
+
+        } catch (error) {
+            console.error(error);
+            alert("Something went wrong");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
             <LoggedInNavBar />
@@ -71,23 +115,27 @@ export default function OwnRecipeManager() {
                     <h1 className="text-[#003049] text-2xl font-bold drop-shadow-lg mb-10 md:text-3xl">
                         Create Your Own Recipes
                     </h1>
+
                     <div className="container w-full ">
-                        <label htmlFor="recipeName" className="block text-[#1f263f] ">
+                        <label className="block text-[#1f263f] ">
                             Recipe Name
                         </label>
                         <input
                             type="text"
+                            value={recipeName}
+                            onChange={(e) => setRecipeName(e.target.value)}
                             className="w-full border-[#1f263f] border-2 rounded-2xl p-2 mb-10"
                             placeholder="Enter your recipe name"
                         />
                     </div>
+
                     <div className="container w-full">
-                        <label htmlFor="recipeSteps" className="block text-[#1f263f] mb-2">
+                        <label className="block text-[#1f263f] mb-2">
                                 Recipe Steps
                         </label>
                         <div className="w-full h-80 relative mb-0.5 border-2 border-[#1f263f] rounded-2xl">
                             <div className="flex flex-col h-auto">
-                                <div id="recipeStepsContainer" className="flex flex-col gap-4 custome-scrollbar overflow-y-auto h-75 p-2">
+                                <div className="flex flex-col gap-4 custome-scrollbar overflow-y-auto h-75 p-2">
                                     {recipeSteps.map((step, index) => (
                                         <input 
                                             key={index}
@@ -101,27 +149,33 @@ export default function OwnRecipeManager() {
                                 </div>
                             </div>
                         </div>
+
                         <div className="flex flex-row gap-10 items-center justify-center">
-                            <button onClick={handleStepChange} className="w-40 mt-4 px-4 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-[var(--color-cyan-300)] transition">
+                            <button onClick={handleStepChange} className="w-40 mt-4 px-4 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-cyan-300 transition">
                                 Add Step
                             </button>
-                            <button onClick={handleDeleteStep} className="w-40 mt-4 px-4 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-[var(--color-cyan-300)] transition">
+                            <button onClick={handleDeleteStep} className="w-40 mt-4 px-4 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-cyan-300 transition">
                                 Remove Step
                             </button>
                         </div>
                     </div>
                     
                     <div className="container w-full mt-5">
-                        <label htmlFor="recipeIngredients" className="block text-[#1f263f]">
+                        <label className="block text-[#1f263f]">
                             Recipe Ingredients
                         </label>    
 
                         <div className="w-full h-85 border-2 border-[#1f263f] rounded-2xl mb-10">
-                            <label htmlFor="recipeIngredients" className="block text-[#1f263f] m-2">
+                            <label className="block text-[#1f263f] m-2">
                                 No. of Ingredients
                             </label> 
                             <div className="flex gap-4 items-center justify-center m-4">
-                                <input type="text" placeholder="Enter number of ingredient" className="w-full text-sm text-gray-500 items" onChange={(e) => handleNumIngredientsChange(e.target.value)}/>
+                                <input 
+                                    type="text" 
+                                    placeholder="Enter number of ingredient" 
+                                    className="w-full text-sm text-gray-500 items" 
+                                    onChange={(e) => handleNumIngredientsChange(e.target.value)}
+                                />
                             </div>
 
                             <div className="custom-scrollbar overflow-y-auto h-60 m-4">
@@ -137,29 +191,26 @@ export default function OwnRecipeManager() {
                                             />
                                         </div>
 
-                                        <div className="flex flex-col gap-1 items-end">
-                                            <div className="flex gap-2 items-center">
-                                                <input
-                                                    type="text"
-                                                    id={`quantity-${index}`}
-                                                    placeholder="0"
-                                                    className="w-20 p-2 border-2 border-black rounded-xl text-center"
-                                                    value={quantities[index]}
-                                                    onChange={(e) => handleQuantityChange(index, e.target.value)}
-                                                />
+                                        <div className="flex gap-2 items-center">
+                                            <input
+                                                type="text"
+                                                placeholder="0"
+                                                className="w-20 p-2 border-2 border-black rounded-xl text-center"
+                                                value={quantities[index]}
+                                                onChange={(e) => handleQuantityChange(index, e.target.value)}
+                                            />
 
-                                                <select
-                                                    value={units[index]}
-                                                    onChange={(e) => handleUnitChange(index, e.target.value)}
-                                                    className="w-24 p-2 border-2 border-black rounded-xl text-center appearance-none bg-white"
-                                                >
-                                                    <option value="pcs">pcs</option>
-                                                    <option value="g">g</option>
-                                                    <option value="kg">kg</option>
-                                                    <option value="ml">ml</option>
-                                                    <option value="l">l</option>
-                                                </select>
-                                            </div>  
+                                            <select
+                                                value={units[index]}
+                                                onChange={(e) => handleUnitChange(index, e.target.value)}
+                                                className="w-24 p-2 border-2 border-black rounded-xl text-center appearance-none bg-white"
+                                            >
+                                                <option value="pcs">pcs</option>
+                                                <option value="g">g</option>
+                                                <option value="kg">kg</option>
+                                                <option value="ml">ml</option>
+                                                <option value="l">l</option>
+                                            </select>
                                         </div>
                                     </div>
                                 ))}
@@ -167,9 +218,13 @@ export default function OwnRecipeManager() {
                         </div>
                     </div>
 
-                        <button className="px-6 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-[var(--color-cyan-300)] transition">
-                            Create Recipe
-                        </button>
+                    <button 
+                        onClick={handleCreateRecipe}
+                        className="px-6 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-cyan-300 transition"
+                    >
+                        Create Recipe
+                    </button>
+
                 </div>
             </div>
         </div>
