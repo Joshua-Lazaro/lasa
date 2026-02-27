@@ -46,16 +46,16 @@ export default function LandingPage() {
         <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
             <NavBar />
             <div id="landing-page" className="">
-                <div className="relative w-auto h-155 mb-50  overflow-hidden">
+                <div className="relative w-auto h-150 sm:h-155 mb-50  overflow-hidden"> 
                     <div className="bg-black opacity-80 w-full h-full">
                         <Image 
-                            className="w-full h-48 object-cover object-left shadow-md sm:w-full sm:h-96"
+                            className="w-full h-full object-cover object-left sm:object-center-top shadow-md sm:w-full sm:h-96"
                             src="/lasa-landing.png"
                             alt="Filipino cuisine."
                             fill
                         />
                     </div>
-                    <div className="absolute inset-0 flex items-center justify-start pl-5 sm:pl-3"> {/* Image behind text */}
+                    <div className="absolute inset-0 flex items-center justify-start pl-5 pt-12 sm:pl-10 sm:pt-5"> {/* Text infront image */}
                         <div className="p-4 flex flex-col items-start text-left">
                             <div className="rounded flex flex-col items-start text-left space-y-3">
                                 <h1 className="text-[#1f263f] text-4xl font-bold drop-shadow-lg mb-10">

@@ -15,8 +15,9 @@ export default function NavBar() {
                     />
                 </a>*/}
                 <Link href="/" className="text-2xl font-bold flex flex-row items-center">
-                    <h1 className="text-[#1a2b3c]">LA</h1>
-                    <h1 className="text-[var(--color-cyan-300)]">SA</h1>
+                    <span className="flex flex-row">
+                        <h1 className="text-[#1a2b3c]">LA</h1><h1 className="text-[var(--color-cyan-300)]">SA</h1>
+                    </span>
                 </Link>
             </div>
             <div className="space-x-4">
