@@ -59,7 +59,7 @@ export default function Dashboard() {
               </h2>
               <a
                 href={card.href}
-                className="relative w-full h-96 md:h-120 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                className="relative w-full h-96 md:h-115 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
               >
                 <div className="w-[90%] h-[90%] relative">
                   <Image
