@@ -111,7 +111,7 @@ export default function OwnRecipeManager() {
                         </div>
                     </div>
                     
-                    <div className="container w-full mt-10">
+                    <div className="container w-full mt-5">
                         <label htmlFor="recipeIngredients" className="block text-[#1f263f]">
                             Recipe Ingredients
                         </label>    
