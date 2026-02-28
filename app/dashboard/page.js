@@ -78,7 +78,6 @@ useEffect(() => {
 
       {/* Dashboard Welcome Image */}
       <div className="relative p-10 rounded-lg w-full flex flex-col items-center ">
-        <span className="flex flex-row"></span>
         <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-14 px-2">
             Welcome to Your Dashboard!
         </h1>

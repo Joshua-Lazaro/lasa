@@ -109,7 +109,15 @@ export default function SearchRecipes() {
     <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
       <LoggedInNavBar />
 
-      <div className="relative p-10 w-full flex flex-col items-center mt-10">
+      <div className="flex items-center justify-center mt-5">
+        <h1 className="text-4xl md:text-5xl items-center font-bold text-[#003049] drop-shadow-lg mt-14 px-2">
+          <span className="flex flex-row gap-2">
+            <h1 className="text-[#1a2b3c]">Recipe</h1>
+            <h1 className="text-[var(--color-cyan-300)]">Search</h1>
+          </span>
+        </h1>
+      </div>
+      <div className="relative p-10 w-full flex flex-col items-center mt-5">
         <SearchBar onSearch={handleSearch} onAiSuggest={handleAiClick} />
 
         {/** TO DO: IMPLEMENT PROPER LOADING SCREEN */}
@@ -135,18 +143,18 @@ export default function SearchRecipes() {
                     router.push(`/recipePage/${recipe.recipe_id}`);
                   }
                 }}
-                className="relative rounded-lg border-2 border-[#1f263f] h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-105 transition-transform duration-200 cursor-pointer"
+                className="relative rounded-lg border-2 border-[#1f263f] h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-105  hover:border-[var(--color-cyan-300)] transition-transform duration-200 cursor-pointer"
               >
                 <Image
                   src={recipe.aiGenerated ? getImageSrc(recipe.recipe_id) : getImageSrc(recipe.recipe_id)}
                   alt={recipe.recipe_name}
                   fill
-                  className="object-cover rounded-lg"
+                  className="object-cover rounded-lg object-center hover:opacity-50 transform transition-opacity duration-200"
                   unoptimized
                 />
 
                 {/* Recipe name */}
-                <h1 className="absolute bottom-0 left-0 right-0 text-center text-black bg-[#f8f9fa] py-2 rounded-b-lg">
+                <h1 className="absolute bottom-0 left-0 right-0 text-center text-[#003049] bg-[#f8f9fa] py-2 rounded-b-lg">
                   {recipe.recipe_name}
                 </h1>
 
