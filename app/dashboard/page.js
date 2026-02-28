@@ -33,7 +33,7 @@ useEffect(() => {
     setIsReady(true);
   }
     fetchRecipes();
-}, []); 
+  }, []); 
 
   // Normal search: pass the query as a URL param
   const handleSearch = (searchTerm) => {
@@ -82,17 +82,6 @@ useEffect(() => {
         <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-14 px-2">
             Welcome to Your Dashboard!
         </h1>
-       {/* <div className="bg-amber-600 rounded-lg w-full h-120">
-          <Image
-            className="object-contain"
-            src="/dashboard-lasa.png"
-            alt="Cook with LASA"
-            fill
-          /> 
-          <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-10 px-2">
-            Welcome to Your Dashboard
-          </h1>
-        </div> */}
 
         {/* Search Bar */}
         <div className="w-full items-center mt-10 mb-10">
@@ -130,7 +119,6 @@ useEffect(() => {
             </div> 
           </div>
         </div>
-
 
         {/* Dashboard Cards */}
         <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 justify-items-center items-start mt-15 p-4 gap-6">
