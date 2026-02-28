@@ -39,3 +39,19 @@ body {
 button {
   font-family: 'Epilogue', Helvetica, sans-serif;
 }
+
+@keyframes reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0.98); /* Subtle scale adds a "pop" */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-reveal {
+  animation: reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: transform, opacity;
+}
