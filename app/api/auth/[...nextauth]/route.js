@@ -34,7 +34,7 @@ export const authOptions = {
           });
 
           const [rows] = await connection.execute(
-            "SELECT user_id, username, password FROM user_login WHERE username = ?",
+            "SELECT user_id, username, user_firstname, password FROM user_login WHERE username = ?",
             [username]
           );
 
@@ -57,7 +57,7 @@ export const authOptions = {
           
           return {
             id: user.user_id,
-            name: user.username,
+            name: user.user_firstname || user.username,
           };
 
         } catch (err) {
@@ -81,6 +81,7 @@ export const authOptions = {
       
       if (user) {
         token.id = user.id;
+        token.name = user.name;
       }
       return token;
     },
@@ -89,6 +90,38 @@ export const authOptions = {
       
       if (token) {
         session.user.id = token.id;
+
+        let connection;
+        try {
+          connection = await mysql.createConnection({
+            host: process.env.DB_HOST,
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            port: Number(process.env.DB_PORT) || 3306,
+            ssl: {
+              rejectUnauthorized: false,
+            },
+          });
+
+          const [rows] = await connection.execute(
+            "SELECT user_firstname FROM user_login WHERE user_id = ? LIMIT 1",
+            [token.id]
+          );
+
+          if (rows.length > 0 && rows[0].user_firstname) {
+            session.user.name = rows[0].user_firstname;
+          } else if (token.name) {
+            session.user.name = token.name;
+          }
+        } catch (err) {
+          console.error("Session name lookup error:", err);
+          if (token.name) {
+            session.user.name = token.name;
+          }
+        } finally {
+          if (connection) await connection.end();
+        }
       }
       return session;
     },

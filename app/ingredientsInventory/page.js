@@ -2,6 +2,7 @@
 
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import { useState, useEffect } from "react";
+import MeasurementUnitPicker from "../components/MeasurementUnitPicker";
 
 // Parsing fractions to decimal
 function parseQuantity(input) {
@@ -169,14 +170,13 @@ export default function Dashboard() {
           <input type="text" placeholder="Quantity" value={quantity}
             onChange={e => setQuantity(e.target.value)}
             className="w-40 p-2 border-2 border-black rounded-xl mb-4 text-center" />
-          <select value={unit} onChange={e => setUnit(e.target.value)}
-            className="w-32 p-2 border-2 border-black rounded-xl mb-4 text-center">
-            <option value="pcs">pcs</option>
-            <option value="g">g</option>
-            <option value="kg">kg</option>
-            <option value="ml">ml</option>
-            <option value="l">l</option>
-          </select>
+          <MeasurementUnitPicker
+            value={unit}
+            onChange={setUnit}
+            wrapperClassName="relative w-32"
+            inputClassName="w-32 p-2 border-2 border-black rounded-xl mb-4 text-center bg-white"
+            dropdownClassName="absolute z-20 mt-1 w-44 max-h-44 overflow-y-auto custom-scrollbar bg-white border-2 border-black rounded-xl shadow-lg"
+          />
           <button onClick={handleAddIngredient}
             className="bg-gray-700 text-white px-5 py-2 rounded-xl hover:bg-gray-900 transition-colors">
             Add Ingredient

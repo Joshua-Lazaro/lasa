@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoggedInNavBar from "../components/LoggedInNavBar";
+import LoggedInFooter from "../components/LoggedInFooter";
 
 function ingredientToLine(ingredient) {
 	if (typeof ingredient === "string") return ingredient;
@@ -39,6 +40,7 @@ function SearchOwnRecipesContent() {
 	const [editTitle, setEditTitle] = useState("");
 	const [editIngredients, setEditIngredients] = useState("");
 	const [editSteps, setEditSteps] = useState("");
+	const [editAdditionalNotes, setEditAdditionalNotes] = useState("");
 
 	const selectedRecipe = useMemo(
 		() => recipes.find((recipe) => recipe.personal_recipe_id === selectedRecipeId) || null,
@@ -100,12 +102,14 @@ function SearchOwnRecipesContent() {
 			setEditTitle("");
 			setEditIngredients("");
 			setEditSteps("");
+			setEditAdditionalNotes("");
 			return;
 		}
 
 		setEditTitle(selectedRecipe.personal_recipe_name || "");
 		setEditIngredients(toLines(selectedRecipe.personal_recipe_ingredients));
 		setEditSteps(toLines(selectedRecipe.personal_recipe_steps));
+		setEditAdditionalNotes(selectedRecipe.additional_notes || "");
 	}, [selectedRecipe]);
 
 	const handleSelectRecipe = (recipeId) => {
@@ -130,6 +134,7 @@ function SearchOwnRecipesContent() {
 					personal_recipe_name: editTitle,
 					personal_recipe_ingredients: splitLines(editIngredients),
 					personal_recipe_steps: splitLines(editSteps),
+					additional_notes: editAdditionalNotes,
 				}),
 			});
 
@@ -269,6 +274,14 @@ function SearchOwnRecipesContent() {
 							className="w-full border-[#1f263f] border-2 rounded-2xl p-2 mb-6 h-52"
 						/>
 
+						<label className="block text-[#1f263f] mb-2">Additional Notes</label>
+						<textarea
+							value={editAdditionalNotes}
+							onChange={(event) => setEditAdditionalNotes(event.target.value)}
+							className="w-full border-[#1f263f] border-2 rounded-2xl p-2 mb-6 min-h-28 resize-y"
+							placeholder="Add notes, links, or anything helpful"
+						/>
+
 						<div className="flex gap-4 justify-center">
 							<button
 								onClick={handleSaveRecipe}
@@ -287,6 +300,7 @@ function SearchOwnRecipesContent() {
 					</div>
 				)}
 			</div>
+			<LoggedInFooter />
 		</div>
 	);
 }

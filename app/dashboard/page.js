@@ -3,8 +3,10 @@
 import Image from "next/image";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
+import Footer from "../components/LoggedInFooter"
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
 
 export default function Dashboard() {
   const [recipes, setRecipes] = useState([]);
@@ -12,9 +14,19 @@ export default function Dashboard() {
   const [isReady, setIsReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [firstName, setFirstName] = useState("");
   const router = useRouter();
 
 useEffect(() => {
+  async function loadSessionName() {
+    const session = await getSession();
+    const rawName = session?.user?.name || "";
+    const extractedFirstName = rawName.trim().split(/\s+/)[0] || "";
+    setFirstName(extractedFirstName);
+  }
+
+  loadSessionName();
+
   const savedRandomized = sessionStorage.getItem("randomizedRecipes");
   if (savedRandomized) {
     setRandomized(JSON.parse(savedRandomized));
@@ -78,9 +90,13 @@ useEffect(() => {
 
       {/* Dashboard Welcome Image */}
       <div className="relative p-10 rounded-lg w-full flex flex-col items-center ">
-        <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-14 px-2">
-            Welcome to Your Dashboard!
-        </h1>
+        <div className="flex flex-row gap-0">
+          <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-14 px-2">
+            Welcome
+          </h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-cyan-300 drop-shadow-lg mb-14 px-2"> {firstName}</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-14 px-2">!</h1>
+        </div>
 
         {/* Search Bar */}
         <div className="w-full items-center mt-10 mb-10">
@@ -122,25 +138,25 @@ useEffect(() => {
         {/* Dashboard Cards */}
         <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 justify-items-center items-start mt-15 p-4 gap-6">
           {[
-            { title: "Inventory", href: "/ingredientsInventory" },
-            { title: "Browse Recipes", href: "/searchRecipes" },
-            { title: "Create Recipes", href: "/ownRecipes" },
-            { title: "My Recipes", href: "/searchOwnRecipes" },
+            { title: "Inventory", href: "/ingredientsInventory", src: "/inventory.png" },
+            { title: "Browse Recipes", href: "/searchRecipes", src: "/search.png"},
+            { title: "Create Recipes", href: "/ownRecipes", src: "/recipe.png" },
+            { title: "My Recipes", href: "/searchOwnRecipes", src: "/recipe-library.png" },
           ].map((card, index) => (
             <div
               key={index}
-              className="flex flex-col items-center w-full max-w-xs"
+              className="flex flex-col items-center w-full max-w-xs "
             >
               <h2 className="text-center text-[#003049] text-2xl md:text-3xl font-bold drop-shadow-lg mb-4 px-2">
                 {card.title}
               </h2>
               <a
                 href={card.href}
-                className="relative w-full h-96 md:h-115 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                className="relative w-full h-96 sm:h-110 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
               >
                 <div className="w-[90%] h-[90%] relative">
                   <Image
-                    src="/img_placeholder.png"
+                    src={card.src}
                     alt={`${card.title} Image`}
                     fill
                     className="object-contain"
@@ -151,6 +167,7 @@ useEffect(() => {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

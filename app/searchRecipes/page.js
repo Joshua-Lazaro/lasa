@@ -5,6 +5,7 @@ import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import LoggedInFooter from "../components/LoggedInFooter";
 
 function SearchRecipesContent() {
   const [recipes, setRecipes] = useState([]);
@@ -169,6 +170,7 @@ function SearchRecipesContent() {
           </div>
         )}
       </div>
+      <LoggedInFooter />
     </div>
   );
 }
