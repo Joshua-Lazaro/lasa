@@ -5,6 +5,7 @@ import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
 
 export default function Dashboard() {
   const [recipes, setRecipes] = useState([]);
@@ -12,9 +13,19 @@ export default function Dashboard() {
   const [isReady, setIsReady] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [firstName, setFirstName] = useState("User");
   const router = useRouter();
 
 useEffect(() => {
+  async function loadSessionName() {
+    const session = await getSession();
+    const rawName = session?.user?.name || "";
+    const extractedFirstName = rawName.trim().split(/\s+/)[0] || "User";
+    setFirstName(extractedFirstName);
+  }
+
+  loadSessionName();
+
   const savedRandomized = sessionStorage.getItem("randomizedRecipes");
   if (savedRandomized) {
     setRandomized(JSON.parse(savedRandomized));
@@ -79,7 +90,7 @@ useEffect(() => {
       {/* Dashboard Welcome Image */}
       <div className="relative p-10 rounded-lg w-full flex flex-col items-center ">
         <h1 className="text-4xl md:text-5xl font-bold text-[#003049] drop-shadow-lg mb-14 px-2">
-            Welcome to Your Dashboard!
+            Welcome {firstName}!
         </h1>
 
         {/* Search Bar */}
