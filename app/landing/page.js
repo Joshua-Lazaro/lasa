@@ -182,7 +182,7 @@ export default function LandingPage() {
                        <div className="w-full h-auto overflow-x-auto sm:overflow-x-hidden sm:overflow-y-hidden">
                             <div className="flex flex-row gap-1 h-70 w-full sm:h-100">
                                 {carousel.map((imgPath, index) => (
-                                <div key={index} className={'relative w-20 h-70 sm:w-55 sm:h-100 rounded-2xl shrink-0 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center animate-reveal'}>
+                                <div key={index} className={'relative w-20 h-70 sm:h-100 sm:w-[55%] lg:w-[30%] aspect-2/4 rounded-2xlcursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center animate-reveal'}>
                                     <Image
                                     src={imgPath}
                                     alt={`Carousel Image ${index + 1}`}
