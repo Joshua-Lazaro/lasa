@@ -3,10 +3,10 @@
 import Image from "next/image";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import SearchBar from "../components/SearchBar";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchRecipes() {
+function SearchRecipesContent() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -170,5 +170,13 @@ export default function SearchRecipes() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SearchRecipes() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#f8f9fa]" />}>
+      <SearchRecipesContent />
+    </Suspense>
   );
 }
