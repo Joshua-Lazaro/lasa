@@ -114,7 +114,7 @@ function SearchRecipesContent() {
         <h1 className="text-4xl md:text-5xl items-center font-bold text-[#003049] drop-shadow-lg mt-14 px-2">
           <span className="flex flex-row gap-2">
             <h1 className="text-[#1a2b3c]">Recipe</h1>
-            <h1 className="text-[var(--color-cyan-300)]">Search</h1>
+            <h1 className="text-cyan-300">Search</h1>
           </span>
         </h1>
       </div>
@@ -144,7 +144,7 @@ function SearchRecipesContent() {
                     router.push(`/recipePage/${recipe.recipe_id}`);
                   }
                 }}
-                className="relative rounded-lg border-2 border-[#1f263f] h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-105  hover:border-[var(--color-cyan-300)] transition-transform duration-200 cursor-pointer"
+                className="relative rounded-lg border-2 border-[#1f263f] h-64 w-64 lg:h-80 lg:w-96 flex flex-col justify-end hover:scale-[1.02] hover:border-cyan-300 transition-all duration-300 ease-out cursor-pointer"
               >
                 <Image
                   src={recipe.aiGenerated ? getImageSrc(recipe.recipe_id) : getImageSrc(recipe.recipe_id)}

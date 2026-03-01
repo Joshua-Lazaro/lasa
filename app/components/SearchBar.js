@@ -17,7 +17,7 @@ export default function SearchBar({ onSearch, onAiSuggest }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full lg:w-full max-w-md mx-auto flex items-center border-2 border-gray-300 rounded-lg overflow-hidden"
+      className="w-full lg:w-full max-w-md mx-auto flex items-center border-2 border-gray-300 rounded-xl overflow-hidden"
     >
       <input
         type="text"
@@ -43,7 +43,7 @@ export default function SearchBar({ onSearch, onAiSuggest }) {
 
         <button
           type="submit"
-          className="bg-[var(--color-cyan-300)] w-20 text-white rounded-r-lg hover:bg-blue-600 transition-colors"
+          className="bg-cyan-300 w-20 text-white rounded-r-l hover:bg-blue-600 transition-colors"
         >
           Search
         </button>
