@@ -235,7 +235,7 @@ function SearchOwnRecipesContent() {
 							<button
 								key={recipe.personal_recipe_id}
 								onClick={() => handleSelectRecipe(recipe.personal_recipe_id)}
-								className={`relative rounded-lg border-2 h-40 w-64 lg:w-96 p-6 text-left transition-transform duration-200 hover:scale-105 ${
+								className={`relative rounded-lg border-2 h-40 w-64 lg:w-96 p-6 text-left transition-all duration-300 ease-out hover:scale-[1.02] ${
 									recipe.personal_recipe_id === selectedRecipeId
 										? "border-[#003049] bg-[#e5f2ff]"
 										: "border-[#1f263f] bg-white"

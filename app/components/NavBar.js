@@ -1,12 +1,19 @@
 "use client";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 export default function NavBar() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
   return (
-     <nav className="sticky top-0 p-4 bg-[#f8f9fa] text-[#1a2b3c] flex justify-between items-center border-b-2 border-[#1a2b3c] pb-1 z-50"> 
-        <div className="max-w-7xl mx-auto w-full flex justify-between items-center">
-            <div className="flex items-center space-x-4">
+      <nav className="sticky top-0 bg-[#f8f9fa] text-[#1a2b3c] border-b-2 border-[#1a2b3c] z-50 px-4 py-4"> 
+          <div className="max-w-7xl mx-auto w-full flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+            <div className="flex items-center justify-between w-full sm:w-auto">
                 {/*<a href="/">
                     <img
                         src="/lasa-logo.png"
@@ -16,13 +23,24 @@ export default function NavBar() {
                 </a>*/}
                 <Link href="/" className="text-2xl font-bold flex flex-row items-center">
                     <span className="flex flex-row">
-                        <h1 className="text-[#1a2b3c]">LA</h1><h1 className="text-[var(--color-cyan-300)]">SA</h1>
+                        <h1 className="text-[#1a2b3c]">LA</h1><h1 className="text-cyan-300">SA</h1>
                     </span>
                 </Link>
+
+                {isMounted && (
+                    <button
+                        type="button"
+                        onClick={() => setIsMenuOpen((prev) => !prev)}
+                        className="sm:hidden px-3 py-1 border border-[#1a2b3c] rounded-md text-sm font-semibold"
+                    >
+                        {isMenuOpen ? "Menu ▲" : "Menu ▼"}
+                    </button>
+                )}
             </div>
-            <div className="space-x-4">
-                <Link href="/login" className="hover:underline">Sign In</Link>
-                <Link href="/register" className="hover:underline">Register</Link>
+
+            <div className={`${isMounted ? (isMenuOpen ? "flex" : "hidden") : "flex"} w-full flex-col gap-2 pt-1 text-sm sm:text-base sm:w-auto sm:pt-0 sm:flex sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-6 sm:gap-y-2`}>
+                <Link href="/login" onClick={() => setIsMenuOpen(false)} className="hover:underline">Sign In</Link>
+                <Link href="/register" onClick={() => setIsMenuOpen(false)} className="hover:underline">Register</Link>
             </div>
         </div>
     </nav>

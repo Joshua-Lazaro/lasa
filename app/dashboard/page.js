@@ -106,16 +106,17 @@ useEffect(() => {
           />
         </div>
 
-        <div className="w-full h-100 pb-5" >{/* Recommendation Cards */}
+        <div className="w-full max-w-6xl pb-5" >
+          {/* Recommendation Cards */}
           <h2 className="text-left text-[#003049] text-2xl md:text-3xl font-bold drop-shadow-lg mb-5 px-2">
             Recommended for You
           </h2>
-          <div className="flex flex-row h-full w-full gap-6 px-4 rounded-lg shadow-lg p-6 items-center justify-center bg-[url('/checkered-bg.png')] object-bottom-left bg-repeat">
-            <div className="custom-scrollbar flex flex-row sm:flex sm:flex-row overflow-x-auto p-5 gap-12 sm:gap-10">
+          <div className="w-full rounded-lg shadow-lg p-6 bg-[url('/checkered-bg.png')] object-bottom-left bg-repeat">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 justify-items-center">
             {randomized.map((recipe, index) => (
               <div
                 key={recipe.recipe_id}
-                className={`relative w-60 h-70 sm:w-50 sm:h-65 rounded-2xl shrink-0 cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center animate-reveal`}
+                className={`relative w-full max-w-[220px] aspect-[4/5] rounded-2xl cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-300 ease-out flex items-center justify-center animate-reveal`}
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 <Image
@@ -152,7 +153,7 @@ useEffect(() => {
               </h2>
               <a
                 href={card.href}
-                className="relative w-full h-96 sm:h-110 border-2 border-black rounded-2xl cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center"
+                className="relative w-full h-96 sm:h-110 border-2 border-black rounded-2xl cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-300 ease-out flex items-center justify-center"
               >
                 <div className="w-[90%] h-[90%] relative">
                   <Image
@@ -167,7 +168,7 @@ useEffect(() => {
           ))}
         </div>
       </div>
-      <Footer />
+      <Footer/>
     </div>
   );
 }
