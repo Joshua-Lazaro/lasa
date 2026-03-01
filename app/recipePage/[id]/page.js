@@ -15,6 +15,15 @@ export default function RecipePage() {
   useEffect(() => {
     if (!id) return;
 
+    if (id === "ai") {
+      const stored = localStorage.getItem("aiRecipe");
+      if (stored) {
+        setRecipe(JSON.parse(stored));
+        setLoading(false);
+        return;
+      }
+    }
+
     async function fetchRecipe() {
       try {
         const res = await fetch(`/api/recipes/${id}`, {
@@ -29,7 +38,6 @@ export default function RecipePage() {
         const data = await res.json();
         setRecipe(data);
       } catch (err) {
-        console.error(err);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -39,63 +47,40 @@ export default function RecipePage() {
     fetchRecipe();
   }, [id]);
 
-  if (loading)
-    return <p className="text-center mt-10">Loading recipe...</p>;
+  if (loading) return <p className="text-center mt-10">Loading...</p>;
+  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
+  if (!recipe) return <p className="text-center mt-10">Recipe not found.</p>;
 
-  if (error)
-    return <p className="text-center mt-10 text-red-500">{error}</p>;
-
-  if (!recipe)
-    return <p className="text-center mt-10">Recipe not found.</p>;
-
-  // Split ingredients
-  const ingredientsList = recipe.recipe_ingredient_list
-    ? recipe.recipe_ingredient_list
-        .split(/,|\r?\n/)
+  const ingredientsList = recipe.aiGenerated
+    ? recipe.recipe_ingredient_list.split(",")
+    : recipe.recipe_ingredient_list
+        ?.split(/,|\r?\n/)
         .map((item) => item.trim())
-        .filter((item) => item !== "")
-    : [];
+        .filter((item) => item !== "");
 
-  // Split steps
-  const stepsList = recipe.recipe_steps
-    ? recipe.recipe_steps
-        .split(/\d+\.\s/)
+  const stepsList = recipe.aiGenerated
+    ? recipe.recipe_steps.split("\n")
+    : recipe.recipe_steps
+        ?.split(/\d+\.\s/)
         .map((item) => item.trim())
-        .filter((item) => item !== "")
-    : [];
-
- 
-  const getImageSrc = (id) => `/recipeImages/${id}.jpg?ts=${Date.now()}`;
+        .filter((item) => item !== "");
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
+    <div className="min-h-screen bg-[#f8f9fa] text-[#003049]">
       <LoggedInNavBar />
-      <div className="p-10 max-w-4xl mx-auto flex flex-col items-center">
 
-        {/* Back button */}
+      <div className="p-10 max-w-4xl mx-auto flex flex-col items-center">
         <button
           onClick={() => router.back()}
-          className="self-start mb-4 px-4 py-2 bg-blue-400 hover:bg-blue-500 rounded-lg "
+          className="self-start mb-4 px-4 py-2 bg-[var(--color-cyan-300)] hover:bg-blue-500 rounded-lg"
         >
           ← Back
         </button>
-
-        {/* Recipe Image */}
-        <div className="relative w-full h-80 lg:h-96 mb-8 rounded-lg overflow-hidden border-2 border-black">
-          <Image
-            src={getImageSrc(id)}
-            alt={recipe.recipe_name}
-            fill
-            className="object-cover"
-            unoptimized
-          />
-        </div>
 
         <h1 className="text-3xl font-bold mb-8 text-center">
           {recipe.recipe_name}
         </h1>
 
-        {/* Ingredients */}
         <div className="mb-10 border-2 border-black rounded-xl p-6 w-full">
           <h2 className="text-xl font-semibold mb-4">Ingredients</h2>
           <ul className="list-disc pl-6 space-y-2">
@@ -105,7 +90,6 @@ export default function RecipePage() {
           </ul>
         </div>
 
-        {/* Steps */}
         <div className="border-2 border-black rounded-xl p-6 w-full">
           <h2 className="text-xl font-semibold mb-4">Cooking Steps</h2>
           <ol className="list-decimal pl-6 space-y-2">
@@ -114,7 +98,6 @@ export default function RecipePage() {
             ))}
           </ol>
         </div>
-
       </div>
     </div>
   );

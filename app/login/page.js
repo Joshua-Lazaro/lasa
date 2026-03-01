@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const router = useRouter();
@@ -64,15 +65,25 @@ export default function LoginPage() {
               <label htmlFor="password" className="block text-[#1f263f]">
                 Password
               </label>
-              <input
-                type="password"
-                id="password"
-                className="w-full p-2 border border-gray-300 rounded mt-1"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative mt-1">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  className="w-full p-2 pr-10 border border-gray-300 rounded"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute inset-y-0 right-0 px-3 text-[#1f263f]"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "🙈" : "👁"}
+                </button>
+              </div>
             </div>
             {error && <p className="text-red-500 mb-2">{error}</p>}
             {success && (
@@ -81,7 +92,7 @@ export default function LoginPage() {
             <div className="flex flex-col gap-1 justify-center items-center">
               <button
                 type="submit"
-                className="w-[var(--size)] bg-[#f8f9fa] text-black px-4 py-2 rounded border-2 border-black hover:bg-[var(--color-cyan-300)] transition text-center"
+                className="w-(--size) bg-[#f8f9fa] text-black px-4 py-2 rounded border-2 border-black hover:bg-cyan-300 transition text-center"
               >
                 Login
               </button>

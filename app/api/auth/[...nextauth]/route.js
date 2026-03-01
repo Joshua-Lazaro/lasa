@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import mysql from "mysql2/promise";
+import bcrypt from "bcrypt";
 
 export const authOptions = {
   providers: [
@@ -44,7 +45,10 @@ export const authOptions = {
           const user = rows[0];
 
          
-          const isValid = user.password === password;
+          const isBcryptHash = typeof user.password === "string" && user.password.startsWith("$2");
+          const isValid = isBcryptHash
+            ? await bcrypt.compare(password, user.password)
+            : user.password === password;
 
           if (!isValid) {
             return null;

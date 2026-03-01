@@ -2,18 +2,22 @@
 
 import { useState } from "react";
 
-export default function SearchBar({ onSearch }) {
+export default function SearchBar({ onSearch, onAiSuggest }) {
   const [input, setInput] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); 
-    onSearch(input);
+    e.preventDefault();
+    if (onSearch) onSearch(input);
+  };
+
+  const handleAiClick = () => {
+    if (onAiSuggest) onAiSuggest(input);
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-85 lg:w-full max-w-md mx-auto flex items-center border-2 border-gray-300 rounded-lg overflow-hidden"
+      className="w-full lg:w-full max-w-md mx-auto flex items-center border-2 border-gray-300 rounded-lg overflow-hidden"
     >
       <input
         type="text"
@@ -23,24 +27,27 @@ export default function SearchBar({ onSearch }) {
         className="grow p-2 outline-none"
       />
 
-      {/* Image Button */}
-      <button
-        type="button"
-        className="w-16 h-10 flex justify-center items-center ml-2 bg-gray-0 rounded-lg hover:scale-110 transition-transform duration-200 cursor-pointer"
-      >
-        <img
-          src="/aiSmartSuggest.png"
-          alt="Filter"
-          className="w-12 h-10 object-contain"
-        />
-      </button>
+      <div className="flex flex-row">
+        {/*AI Image Button */}
+        <button
+          type="button"
+          onClick={handleAiClick}
+          className="w-10 h-10 justify-center items-center hover:scale-110 transition-transform duration-200 cursor-pointer"
+        >
+          <img
+            src="/aiSmartSuggest.png"
+            alt="AI Suggest"
+            className="w-10 h-10 object-contain"
+          />
+        </button>
 
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600 transition-colors"
-      >
-        Search
-      </button>
+        <button
+          type="submit"
+          className="bg-[var(--color-cyan-300)] w-20 text-white rounded-r-lg hover:bg-blue-600 transition-colors"
+        >
+          Search
+        </button>
+      </div>
     </form>
   );
 }
