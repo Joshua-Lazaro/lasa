@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import LoggedInNavBar from "../components/LoggedInNavBar";
+import MeasurementUnitPicker from "../components/MeasurementUnitPicker";
 
 export default function OwnRecipeManager() {
 
@@ -14,6 +15,7 @@ export default function OwnRecipeManager() {
     const [ingredients, setIngredients] = useState(Array(1).fill(""));
     const [quantities, setQuantities] = useState(Array(1).fill(""));
     const [units, setUnits] = useState(Array(1).fill("pcs"));
+    const [additionalNotes, setAdditionalNotes] = useState("");
 
     const handleIngredientChange = (index, value) => {
         const updatedIngredients = [...ingredients];
@@ -64,9 +66,7 @@ export default function OwnRecipeManager() {
         }
     }
 
-    /* =========================
-       CREATE RECIPE FUNCTION
-    ========================= */
+    //CREATE RECIPE FUNCTION
     const handleCreateRecipe = async () => {
 
         if (!recipeName.trim()) {
@@ -87,7 +87,8 @@ export default function OwnRecipeManager() {
                 body: JSON.stringify({
                     name: recipeName,
                     ingredients: formattedIngredients,
-                    steps: recipeSteps
+                    steps: recipeSteps,
+                    additional_notes: additionalNotes
                 })
             });
 
@@ -178,10 +179,10 @@ export default function OwnRecipeManager() {
                                 />
                             </div>
 
-                            <div className="custom-scrollbar overflow-y-auto h-60 m-4">
+                            <div className="custom-scrollbar overflow-y-auto overflow-x-hidden h-60 m-4">
                                 {ingredients.map((ingredient, index) => (
-                                    <div key={index} className="flex gap-4 items-end mb-4">
-                                        <div className="flex-1 flex flex-col gap-1">
+                                    <div key={index} className="flex gap-2 items-end mb-4">
+                                        <div className="flex-1 min-w-0 flex flex-col gap-1">
                                             <input
                                                 type="text"
                                                 className="w-full h-full border-gray-300 border-b-2 rounded relative"
@@ -195,27 +196,35 @@ export default function OwnRecipeManager() {
                                             <input
                                                 type="text"
                                                 placeholder="0"
-                                                className="w-20 p-2 border-2 border-black rounded-xl text-center"
+                                                className="w-16 p-2 border-2 border-black rounded-xl text-center"
                                                 value={quantities[index]}
                                                 onChange={(e) => handleQuantityChange(index, e.target.value)}
                                             />
 
-                                            <select
+                                            <MeasurementUnitPicker
                                                 value={units[index]}
-                                                onChange={(e) => handleUnitChange(index, e.target.value)}
-                                                className="w-24 p-2 border-2 border-black rounded-xl text-center appearance-none bg-white"
-                                            >
-                                                <option value="pcs">pcs</option>
-                                                <option value="g">g</option>
-                                                <option value="kg">kg</option>
-                                                <option value="ml">ml</option>
-                                                <option value="l">l</option>
-                                            </select>
+                                                onChange={(value) => handleUnitChange(index, value)}
+                                                wrapperClassName="relative w-20"
+                                                inputClassName="w-20 p-2 border-2 border-black rounded-xl text-center bg-white"
+                                                dropdownClassName="absolute right-0 z-20 mt-1 w-32 max-h-44 overflow-y-auto custom-scrollbar bg-white border-2 border-black rounded-xl shadow-lg"
+                                            />
                                         </div>
                                     </div>
                                 ))}
                             </div> 
                         </div>
+                    </div>
+
+                    <div className="container w-full mb-8">
+                        <label className="block text-[#1f263f] mb-2">
+                            Additional Notes
+                        </label>
+                        <textarea
+                            value={additionalNotes}
+                            onChange={(e) => setAdditionalNotes(e.target.value)}
+                            className="w-full border-[#1f263f] border-2 rounded-2xl p-3 min-h-28 resize-y"
+                            placeholder="Add notes, links, or anything helpful (optional)"
+                        />
                     </div>
 
                     <button 
