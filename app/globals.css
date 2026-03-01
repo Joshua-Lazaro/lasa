@@ -40,6 +40,14 @@ button {
   font-family: 'Epilogue', Helvetica, sans-serif;
 }
 
+button:enabled {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 @keyframes reveal {
   0% {
     opacity: 0;
