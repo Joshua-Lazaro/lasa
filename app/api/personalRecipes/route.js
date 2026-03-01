@@ -56,6 +56,7 @@ function normalizeRecipeRow(row) {
     personal_recipe_name: row.personal_recipe_name,
     personal_recipe_ingredients: parseLongTextAsArray(row.personal_recipe_ingredients),
     personal_recipe_steps: parseLongTextAsArray(row.personal_recipe_steps),
+    additional_notes: row.additional_notes || "",
   };
 }
 
@@ -88,7 +89,8 @@ export async function GET(request) {
             user_id,
             personal_recipe_name,
             personal_recipe_ingredients,
-            personal_recipe_steps
+            personal_recipe_steps,
+            additional_notes
           FROM personal_recipe
           WHERE personal_recipe_id = ? AND user_id = ?
           LIMIT 1
@@ -110,7 +112,8 @@ export async function GET(request) {
           user_id,
           personal_recipe_name,
           personal_recipe_ingredients,
-          personal_recipe_steps
+          personal_recipe_steps,
+          additional_notes
         FROM personal_recipe
         WHERE user_id = ?
         ORDER BY personal_recipe_id DESC
@@ -131,7 +134,7 @@ export async function POST(request) {
   const session = await getServerSession(authOptions);
   if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { name, ingredients, steps } = await request.json();
+  const { name, ingredients, steps, additional_notes } = await request.json();
 
   if (!name?.trim()) {
     return Response.json({ error: "Recipe title is required" }, { status: 400 });
@@ -142,6 +145,7 @@ export async function POST(request) {
   try {
     const ingredientText = toLongTextValue(ingredients, true);
     const stepsText = toLongTextValue(steps, false);
+    const notesText = String(additional_notes ?? "").trim();
 
     const [result] = await connection.execute(
       `
@@ -149,14 +153,16 @@ export async function POST(request) {
           user_id,
           personal_recipe_ingredients,
           personal_recipe_steps,
-          personal_recipe_name
-        ) VALUES (?, ?, ?, ?)
+          personal_recipe_name,
+          additional_notes
+        ) VALUES (?, ?, ?, ?, ?)
       `,
       [
         session.user.id,
         ingredientText,
         stepsText,
         name.trim(),
+        notesText,
       ]
     );
 
@@ -167,7 +173,8 @@ export async function POST(request) {
           user_id,
           personal_recipe_name,
           personal_recipe_ingredients,
-          personal_recipe_steps
+          personal_recipe_steps,
+          additional_notes
         FROM personal_recipe
         WHERE personal_recipe_id = ? AND user_id = ?
         LIMIT 1
@@ -188,7 +195,13 @@ export async function PUT(request) {
   const session = await getServerSession(authOptions);
   if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { personal_recipe_id, personal_recipe_name, personal_recipe_ingredients, personal_recipe_steps } = await request.json();
+  const {
+    personal_recipe_id,
+    personal_recipe_name,
+    personal_recipe_ingredients,
+    personal_recipe_steps,
+    additional_notes,
+  } = await request.json();
 
   if (!personal_recipe_id) {
     return Response.json({ error: "Recipe id is required" }, { status: 400 });
@@ -204,19 +217,35 @@ export async function PUT(request) {
     const ingredientText = toLongTextValue(personal_recipe_ingredients, true);
     const stepsText = toLongTextValue(personal_recipe_steps, false);
 
+    const [existingRows] = await connection.execute(
+      "SELECT additional_notes FROM personal_recipe WHERE personal_recipe_id = ? AND user_id = ? LIMIT 1",
+      [personal_recipe_id, session.user.id]
+    );
+
+    if (existingRows.length === 0) {
+      return Response.json({ error: "Recipe not found" }, { status: 404 });
+    }
+
+    const notesText =
+      additional_notes !== undefined
+        ? String(additional_notes ?? "").trim()
+        : String(existingRows[0].additional_notes ?? "");
+
     const [updateResult] = await connection.execute(
       `
         UPDATE personal_recipe
         SET
           personal_recipe_name = ?,
           personal_recipe_ingredients = ?,
-          personal_recipe_steps = ?
+          personal_recipe_steps = ?,
+          additional_notes = ?
         WHERE personal_recipe_id = ? AND user_id = ?
       `,
       [
         personal_recipe_name.trim(),
         ingredientText,
         stepsText,
+        notesText,
         personal_recipe_id,
         session.user.id,
       ]
@@ -233,7 +262,8 @@ export async function PUT(request) {
           user_id,
           personal_recipe_name,
           personal_recipe_ingredients,
-          personal_recipe_steps
+          personal_recipe_steps,
+          additional_notes
         FROM personal_recipe
         WHERE personal_recipe_id = ? AND user_id = ?
         LIMIT 1
