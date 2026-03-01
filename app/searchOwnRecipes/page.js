@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoggedInNavBar from "../components/LoggedInNavBar";
+import LoggedInFooter from "../components/LoggedInFooter";
 
 function ingredientToLine(ingredient) {
 	if (typeof ingredient === "string") return ingredient;
@@ -299,6 +300,7 @@ function SearchOwnRecipesContent() {
 					</div>
 				)}
 			</div>
+			<LoggedInFooter />
 		</div>
 	);
 }
