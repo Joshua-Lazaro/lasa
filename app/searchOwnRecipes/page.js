@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 
@@ -26,7 +26,7 @@ function splitLines(value) {
 		.filter(Boolean);
 }
 
-export default function SearchOwnRecipes() {
+function SearchOwnRecipesContent() {
 	const router = useRouter();
 	const searchParams = useSearchParams();
 
@@ -288,5 +288,13 @@ export default function SearchOwnRecipes() {
 				)}
 			</div>
 		</div>
+	);
+}
+
+export default function SearchOwnRecipes() {
+	return (
+		<Suspense fallback={<div className="min-h-screen bg-[#f8f9fa]" />}>
+			<SearchOwnRecipesContent />
+		</Suspense>
 	);
 }
