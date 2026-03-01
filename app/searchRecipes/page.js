@@ -127,7 +127,7 @@ function SearchRecipesContent() {
         ) : error ? (
           <p className="mt-10 text-red-500">{error}</p>
         ) : recipes.length === 0 ? (
-          <p className="mt-10">No recipes found.</p>
+          <p className="mt-10">Add ingredients to receive AI-recommended dishes!</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-10 mb-20">
             {recipes.map((recipe) => (
