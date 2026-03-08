@@ -64,6 +64,7 @@ export default function Dashboard() {
   const [quantity, setQuantity] = useState("");
   const [unit, setUnit] = useState("pcs");
   const [error, setError] = useState("");
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => { fetchInventory(); }, []);
 
@@ -104,6 +105,7 @@ export default function Dashboard() {
     const inputQty = parseQuantity(quantity);
     if (isNaN(inputQty) || inputQty <= 0) return setError("Quantity must be positive");
 
+    setLoading(true);
     try {
       const res = await fetch("/api/inventory", {
         method: "POST",
@@ -122,6 +124,8 @@ export default function Dashboard() {
       setSearch(""); setQuantity(""); setSelectedIngredient(null); setIngredientResults([]);
     } catch {
       setError("Error adding/updating ingredient");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -177,9 +181,9 @@ export default function Dashboard() {
             inputClassName="w-32 p-2 border-2 border-black rounded-xl mb-4 text-center bg-white"
             dropdownClassName="absolute z-20 mt-1 w-44 max-h-44 overflow-y-auto custom-scrollbar bg-white border-2 border-black rounded-xl shadow-lg"
           />
-          <button onClick={handleAddIngredient}
-            className="bg-gray-700 text-white px-5 py-2 rounded-xl hover:bg-gray-900 transition-colors">
-            Add Ingredient
+          <button onClick={handleAddIngredient} disabled={isLoading}
+            className="bg-gray-700 text-white px-5 py-2 rounded-xl hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            {isLoading ? "Adding..." : "Add Ingredient"}
           </button>
           <button onClick={handleClearAll}
             className="bg-blue-400 text-white px-5 py-2 rounded-xl hover:bg-blue-800 transition-colors">

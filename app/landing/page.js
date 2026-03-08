@@ -136,7 +136,7 @@ export default function LandingPage() {
                         <div className="flex flex-col items-center h-auto justify-center p-5 gap-10 sm:flex-row sm:gap-25">
                             {featuresCard.map((card,index) => (
                                 <div key={index} className="bg-white rounded-2xl shadow-md w-60 h-90 flex flex-col sm:w-75 sm:h-90 items-center justify-center p-3 gap-5 hover:border-2 in-hover:border-b-gradient">
-                                    <div key={index} className="relative w-full h-30">
+                                    <div key={index} className="relative w-full h-30 sm:h-35">
                                         <Image
                                             src={card.src}
                                             alt={card.alt}

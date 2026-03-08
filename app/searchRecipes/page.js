@@ -123,7 +123,7 @@ function SearchRecipesContent() {
 
         {/** TO DO: IMPLEMENT PROPER LOADING SCREEN */}
         {loading ? (
-          <p className="mt-10">Loading...</p>
+          <p className="mt-10 mb-60">Loading...</p>
         ) : error ? (
           <p className="mt-10 text-red-500">{error}</p>
         ) : recipes.length === 0 ? (
