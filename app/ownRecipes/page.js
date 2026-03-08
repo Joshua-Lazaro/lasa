@@ -1,13 +1,16 @@
 'use client';
-import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import LoggedInNavBar from "../components/LoggedInNavBar";
 import MeasurementUnitPicker from "../components/MeasurementUnitPicker";
 
 export default function OwnRecipeManager() {
 
+    const MIN_SUBMIT_INTERVAL_MS = 1200;
+
     const router = useRouter();
+    const isCreatingRef = useRef(false);
+    const lastSubmitAtRef = useRef(0);
 
     const [recipeName, setRecipeName] = useState("");
     const [recipeSteps, setRecipeSteps] = useState([""]);
@@ -16,6 +19,7 @@ export default function OwnRecipeManager() {
     const [quantities, setQuantities] = useState(Array(1).fill(""));
     const [units, setUnits] = useState(Array(1).fill("pcs"));
     const [additionalNotes, setAdditionalNotes] = useState("");
+    const [isCreating, setIsCreating] = useState(false);
 
     const handleIngredientChange = (index, value) => {
         const updatedIngredients = [...ingredients];
@@ -68,6 +72,12 @@ export default function OwnRecipeManager() {
 
     //CREATE RECIPE FUNCTION
     const handleCreateRecipe = async () => {
+        const now = Date.now();
+
+        // Guard against duplicate submissions from rapid/double clicks.
+        if (isCreatingRef.current || now - lastSubmitAtRef.current < MIN_SUBMIT_INTERVAL_MS) {
+            return;
+        }
 
         if (!recipeName.trim()) {
             alert("Recipe name is required");
@@ -79,6 +89,10 @@ export default function OwnRecipeManager() {
             quantity: quantities[index],
             unit: units[index]
         }));
+
+        isCreatingRef.current = true;
+        lastSubmitAtRef.current = now;
+        setIsCreating(true);
 
         try {
             const response = await fetch("/api/personalRecipes", {
@@ -104,6 +118,11 @@ export default function OwnRecipeManager() {
         } catch (error) {
             console.error(error);
             alert("Something went wrong");
+        } finally {
+            setIsCreating(false);
+            setTimeout(() => {
+                isCreatingRef.current = false;
+            }, MIN_SUBMIT_INTERVAL_MS);
         }
     };
 
@@ -229,9 +248,10 @@ export default function OwnRecipeManager() {
 
                     <button 
                         onClick={handleCreateRecipe}
-                        className="px-6 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-cyan-300 transition"
+                        disabled={isCreating}
+                        className="px-6 py-2 bg-[#1f263f] text-[#f8f9fa] rounded-xl hover:bg-cyan-300 transition disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:bg-[#1f263f]"
                     >
-                        Create Recipe
+                        {isCreating ? "Creating..." : "Create Recipe"}
                     </button>
 
                 </div>
