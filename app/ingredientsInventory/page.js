@@ -147,14 +147,14 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-gray-800">
       <LoggedInNavBar />
-      <div className="relative p-10 rounded-lg w-full flex flex-col items-center">
+      <div className="relative w-full px-4 py-6 sm:px-6 lg:px-10 flex flex-col items-center">
 
         {/* Search */}
-        <div className="relative w-150 mb-4">
+        <div className="relative w-full max-w-xl mb-4">
           <input type="text" placeholder="Search ingredients..." value={search} onChange={handleSearch}
-            className="w-full p-2 border-2 border-black rounded-4xl text-center" />
+            className="w-full p-2 border-2 border-[#1f263f] rounded-2xl text-center bg-white" />
           {ingredientResults.length > 0 &&
-            <div className="absolute top-full left-0 w-full bg-white border border-black rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
+            <div className="absolute top-full left-0 w-full bg-white border-2 border-[#1f263f] rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
               {ingredientResults.map(item => (
                 <div key={item.ingredient_id} className="p-2 cursor-pointer hover:bg-gray-200"
                   onClick={() => { setSelectedIngredient(item); setSearch(item.ingredient_name); setIngredientResults([]); }}>
@@ -168,39 +168,39 @@ export default function Dashboard() {
         {error && <div className="text-red-600 font-semibold mb-4">{error}</div>}
 
         {/* Input */}
-        <div className="flex flex-col md:flex-row flex-wrap justify-center items-start w-full p-4 gap-6">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center items-stretch sm:items-start w-full max-w-5xl p-2 sm:p-4 gap-3 sm:gap-4">
           <input type="text" placeholder="Ingredient" value={search} readOnly
-            className="w-80 p-2 border-2 border-black rounded-xl mb-4 text-center" />
+            className="w-full sm:w-64 md:w-72 p-2 border-2 border-[#1f263f] rounded-xl text-center bg-white" />
           <input type="text" placeholder="Quantity" value={quantity}
             onChange={e => setQuantity(e.target.value)}
-            className="w-40 p-2 border-2 border-black rounded-xl mb-4 text-center" />
+            className="w-full sm:w-36 p-2 border-2 border-[#1f263f] rounded-xl text-center bg-white" />
           <MeasurementUnitPicker
             value={unit}
             onChange={setUnit}
-            wrapperClassName="relative w-32"
-            inputClassName="w-32 p-2 border-2 border-black rounded-xl mb-4 text-center bg-white"
-            dropdownClassName="absolute z-20 mt-1 w-44 max-h-44 overflow-y-auto custom-scrollbar bg-white border-2 border-black rounded-xl shadow-lg"
+            wrapperClassName="relative w-full sm:w-32"
+            inputClassName="w-full sm:w-32 p-2 border-2 border-[#1f263f] rounded-xl text-center bg-white"
+            dropdownClassName="absolute z-20 mt-1 w-full sm:w-44 max-h-44 overflow-y-auto custom-scrollbar bg-white border-2 border-[#1f263f] rounded-xl shadow-lg"
           />
           <button onClick={handleAddIngredient} disabled={isLoading}
-            className="bg-gray-700 text-white px-5 py-2 rounded-xl hover:bg-gray-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            className="bg-[#1f263f] text-[#f8f9fa] px-5 py-2 rounded-xl hover:bg-cyan-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#1f263f]">
             {isLoading ? "Adding..." : "Add Ingredient"}
           </button>
           <button onClick={handleClearAll}
-            className="bg-blue-400 text-white px-5 py-2 rounded-xl hover:bg-blue-800 transition-colors">
+            className="bg-[#003049] text-[#f8f9fa] px-5 py-2 rounded-xl hover:bg-cyan-300 transition-colors">
             Clear All
           </button>
         </div>
 
         {/* Inventory */}
-        <div className="flex justify-center items-center w-full p-4 gap-6 -mt-6">
-          <div className="relative flex flex-col items-center border-2 rounded-xl w-350 h-120 p-4 gap-4">
+        <div className="flex justify-center items-center w-full p-2 sm:p-4">
+          <div className="relative flex flex-col items-center border-2 border-[#1f263f] rounded-2xl w-full max-w-6xl min-h-[28rem] max-h-[70vh] p-4 sm:p-6 gap-4">
             <h1 className="text-[#003049] text-2xl md:text-3xl font-bold drop-shadow-lg">
               Ingredients | Quantity
             </h1>
 
             {inventory.length === 0
               ? <p className="text-gray-500">No ingredients added yet.</p>
-              : <ul className="grid auto-flow-row grid-cols-[repeat(auto-fill,minmax(200px,1fr))] overflow-auto auto-rows-max gap-x-8 gap-y-2 w-full h-full">
+              : <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 overflow-y-auto auto-rows-max gap-3 w-full h-full pr-1">
                   {inventory.map(item => {
                     const { text, isFraction } = formatQuantity(item.ingredient_quantity);
                     return (
